@@ -12,6 +12,64 @@ from rclpy.clock import Clock
 # List of colours from the PointCloud2 that should not be treated as obstacles by the ROS Navigation Stack.
 ACCEPTED_COLOURS = []
 
+
+def metadata_manual_parser(data: str)->dict:
+    w_temp = data.find("width")
+    coma_index = 0
+    for x in range(w_temp,w_temp+10):
+        
+        if data[x]==",":
+            coma_index = x
+
+    width = int(data[int(w_temp)+6:int(coma_index)])
+    print("width: "+str(width))
+
+    h_temp = data.find("height")
+    second_comma_index = 0
+    for y in range(h_temp,h_temp+15):
+        
+        if data[y]==",":
+            second_comma_index = y
+
+    height = int(data[int(h_temp)+7:int(second_comma_index)])
+    print("height: "+str(height))
+
+    origin_x_temp = data.find("x=")
+    coma_origin_x_temp = 0
+    for z in range(origin_x_temp,origin_x_temp+15):
+        
+        if data[z]==",":
+            coma_origin_x_temp = z
+
+    origin_x = float(data[int(origin_x_temp)+2:int(coma_origin_x_temp)])
+    print("origin_x: "+str(origin_x))
+
+
+    origin_y_temp = data.find("y=")
+    coma_origin_y_temp = 0
+    for g in range(origin_y_temp,origin_y_temp+15):
+        
+        if data[g]==",":
+            coma_origin_y_temp = g
+
+    origin_y = float(data[int(origin_y_temp)+2:int(coma_origin_y_temp)])
+    print("origin_y: "+str(origin_y))
+
+    resolution_temp = data.find("resolution=")
+    coma_resolution_temp = 0
+    for j in range(resolution_temp,resolution_temp+40):
+        
+        if data[j]==",":
+            coma_resolution_temp = j
+
+    resolution = float(data[int(resolution_temp)+11:int(coma_resolution_temp)])
+    print("resolution: "+str(resolution))
+
+
+    metadata = {"width": width, "height": height, "origin_x": origin_x, "origin_y":origin_y, "resolution": resolution}
+
+    return metadata
+
 class Colour():
     def __init__(self, rgb):
         self.rgb = rgb
@@ -48,24 +106,31 @@ class Map(object):
         self.final = list(np.round(self.flat_grid))
         self.grid_msg.data = self.final
         return self.grid_msg
-    '''
-    def toMap(self, map_data):
+    
+    def toMap(self, node, map_data):
         """ Return a nav_msgs/OccupancyGrid representation of this map. """
         self.grid_msg = OccupancyGrid()
         # Set up the header.
-        self.grid_msg.header.stamp = self.get_clock().now().to_msg()
+        time_stamp = Clock().now()
+        self.grid_msg.header.stamp = time_stamp.to_msg()
         self.grid_msg.header.frame_id = 'map'
         # .info is a nav_msgs/MapMetaData message.
         self.grid_msg.info.resolution = self.resolution
         self.grid_msg.info.width = self.width
         self.grid_msg.info.height = self.height
+
+        node.get_logger().info('self.origin_x '+str(self.origin_x))
+        node.get_logger().info('self.origin_y '+str(self.origin_y))
+
         # Rotated maps are not supported... quaternion represents no rotation.
-        self.grid_msg.info.origin = Pose(Point(self.origin_x, self.origin_y, 0),
-                                         Quaternion(0, 0, 0, 1))
-        self.grid_msg.data = map_data
+        point_map = Point(x=float(self.origin_x ), y=float(self.origin_y), z=0.0)
+        quat =  Quaternion(x=0.0,y=0.0,z=0.0,w=1.0)
+        self.grid_msg.info.origin = Pose(position=point_map, orientation=quat)
+        #node.get_logger().info('map_data.map.data '+str(map_data.map.data[:]))
+        self.grid_msg.data = map_data.map.data#[:]
         return self.grid_msg
-    '''
     
+    '''
     def toMap(self, map_data):
             """ Return a nav_msgs/OccupancyGrid representation of this map. """
             self.grid_msg = OccupancyGrid()
@@ -81,6 +146,7 @@ class Map(object):
             # Rotated maps are not supported... quaternion represents no rotation.
             self.grid_msg.data = map_data
             return self.grid_msg
+    '''
     
 class Mapper(Node):
     def __init__(self):
@@ -98,12 +164,13 @@ class Mapper(Node):
         # Wait for the map_metadata and map topics to become available
         #self.metadata_sub = self.create_subscription(MapMetaData, map_topic_metadata, self.map_metadata_callback, 1)
         #self.metadata_sub
+
         self.res = 0.05# data.resolution
         self.w = 275 #data.width
         self.h = 246 #data.height
         #self.o = data.origin
         # Create map
-        self._map = Map(-6.28, -5.16, self.res, self.w, self.h)
+        
         #self.grid_msg = self._map.toMap()
         self.response = None
         
@@ -122,15 +189,18 @@ class Mapper(Node):
         if future.result() is not None:
             self.response = future.result()
             # Process the response here
-            print(self.response)
-            self.get_logger().info('Received map data!')
+            
+            #print(str(self.response.map.data[0]))
+            metadata = metadata_manual_parser(str(self.response))
+            self.get_logger().info('Received map data form map server!')
             # You can access the map and metadata using response.map and response.map_metadata
         else:
             self.get_logger().info('Failed to receive map data.')
 
+        self._map = Map(metadata['origin_x'], metadata['origin_y'], metadata['resolution'], metadata['width'], metadata['height'])
         #self.map_sub = self.create_subscription(OccupancyGrid, map_topic, self.map_callback, 1)
         #self.map_sub
-        self.grid_msg = self._map.toMap(self.response)
+        self.grid_msg = self._map.toMap(self, self.response)
 
         #self._map_metadata_pub.publish(self.grid_msg.info)
         #self._map_pub.publish(self.grid_msg)
@@ -142,7 +212,7 @@ class Mapper(Node):
         self.get_logger().info("Publishing semantic map.", once=True)
         
     def occupancygrid_to_numpy(self, msg):
-        self.get_logger().info(str(msg))
+        #self.get_logger().info(str(msg))
         data = np.asarray(msg.data, dtype=np.int8).reshape(msg.info.height, msg.info.width)
         return np.ma.array(data, mask=data==-1, fill_value=-1)
     
@@ -161,6 +231,7 @@ class Mapper(Node):
         return grid
     
     def pcl_callback(self, pointcloud_msg):
+        
         #self.get_logger().info(str(pointcloud_msg), once=True)
         pcl_cloud = list(pcl2.read_points(pointcloud_msg, skip_nans=True))
         # To manipulate the OccupancyGrid and add the pcl2 data, first it needs to be translated into a numpy MaskedArray.
@@ -168,25 +239,37 @@ class Mapper(Node):
         self.get_logger().info("occupancygrid_to_numpy working", once=True)
         try:
             for point in pcl_cloud:
+                #print(point)
                 # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
                 if point[3] not in ACCEPTED_COLOURS:
-                    y = int((point[0] - self._map.origin_x) / self._map.resolution)
-                    x = int((point[1]*50 + self._map.origin_y*1 - 40) / self._map.resolution + 11)
-                    np_occupancy[x][y] = 100.
-            map_occupancy_grid = self.numpy_to_occupancy_grid(np_occupancy, self.grid_msg.info)
-            self._map_metadata_pub.publish(self.grid_msg.info)
-            self._map_pub.publish(map_occupancy_grid)
-        except Exception as e:
-            print(e)
+                    #y = int((point[0] - self._map.origin_x) / self._map.resolution)
+                    #x = int((point[1] + self._map.origin_y*1 - 9) / self._map.resolution)
 
-    def map_callback(self, msg):
-        self.get_logger().info("map callback", once=True)
+                    y = int((point[0] - self._map.origin_x) / self._map.resolution)
+                    x = int((point[1] - self._map.origin_y) / self._map.resolution)
+        
+
+                   # y = int((point[0] - self._map.origin_x) / self._map.resolution)
+                   # x = int((point[1]*50 + self._map.origin_y*1 - 40) / self._map.resolution + 11)
+
+                   # y = int((point[0] - self._map.origin_x) / self._map.resolution)
+                   # x = int((point[1] + self._map.origin_y) / self._map.resolution)
+
+                    np_occupancy[x][y] = 100.
+            
+        except Exception as e:
+            print("ERROR: "+str(e))
+        
+
         try:
-            self.grid_msg = self._map.toMap(msg.data)
-            self._map_metadata_pub.publish(self.grid_msg.info)
+            #print(self.grid_msg.info)
+            #map_occupancy_grid = self.numpy_to_occupancy_grid(np_occupancy, self.grid_msg.info)
+            #self._map_metadata_pub.publish(self.grid_msg.info)
             self._map_pub.publish(self.grid_msg)
-        except Exception as a:
-            print(a)
+        except Exception as e:
+            print("SECOND ERROR: "+str(e))
+
+    
     '''Only called once'''
     def map_metadata_callback(self, data):
         self.res = data.resolution
@@ -195,7 +278,7 @@ class Mapper(Node):
         self.o = data.origin
         # Create map
         self._map = Map(self.o.position.x, self.o.position.y, self.res, self.w, self.h)
-        self.get_logger().info("eading metadata of original map...", once=True)
+        self.get_logger().info("Reading metadata of original map...", once=True)
         
 
 def main():
@@ -204,7 +287,7 @@ def main():
         rclpy.init()
         
         m = Mapper()
-        '''
+        
         m.get_logger().info('Waiting for map_server service...')
         client = m.create_client(GetMap, '/map_server/map')
         while not client.wait_for_service(timeout_sec=1.0):
@@ -217,12 +300,12 @@ def main():
         if future.result() is not None:
             response = future.result()
             # Process the response here
-            print(response)
+            # print(response)
             m.get_logger().info('Received map data!')
             # You can access the map and metadata using response.map and response.map_metadata
         else:
             m.get_logger().info('Failed to receive map data.')
-        '''
+        
         rclpy.spin(m)
     except rclpy.exceptions.ROSInterruptException:
         pass
@@ -232,6 +315,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
