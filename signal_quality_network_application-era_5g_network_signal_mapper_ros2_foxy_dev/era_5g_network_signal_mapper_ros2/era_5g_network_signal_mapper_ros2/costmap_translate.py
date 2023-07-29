@@ -231,7 +231,7 @@ class Mapper(Node):
         return grid
     
     def pcl_callback(self, pointcloud_msg):
-        '''
+        
         #self.get_logger().info(str(pointcloud_msg), once=True)
         pcl_cloud = list(pcl2.read_points(pointcloud_msg, skip_nans=True))
         # To manipulate the OccupancyGrid and add the pcl2 data, first it needs to be translated into a numpy MaskedArray.
@@ -246,7 +246,7 @@ class Mapper(Node):
                     #x = int((point[1] + self._map.origin_y*1 - 9) / self._map.resolution)
 
                     y = int((point[0] - self._map.origin_x) / self._map.resolution)
-                    x = int((point[1] - self._map.origin_y) +11/ self._map.resolution)
+                    x = int((point[1] - self._map.origin_y) / self._map.resolution)
         
 
                    # y = int((point[0] - self._map.origin_x) / self._map.resolution)
@@ -259,7 +259,8 @@ class Mapper(Node):
             
         except Exception as e:
             print("ERROR: "+str(e))
-        '''
+        
+
         try:
             #print(self.grid_msg.info)
             #map_occupancy_grid = self.numpy_to_occupancy_grid(np_occupancy, self.grid_msg.info)
