@@ -6,7 +6,7 @@ Running instructions.
 
 Run using docker compose
 
-Download file "docker-compose.yaml" and open terminal in that file;
+Download file "docker-compose.yaml" and open terminal in that Folder;
 
 Then run:
 ```
