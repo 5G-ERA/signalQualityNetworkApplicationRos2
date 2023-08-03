@@ -1,3 +1,4 @@
-pcl2_pub_example:
+pcl2_to_costmap:
   ros__parameters:
-    base_link: "robot_base_link"
+    semantic_map_frame: "semantic_map"
+    map_frame: "map"

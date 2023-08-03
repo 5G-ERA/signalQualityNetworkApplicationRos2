@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+
 import rclpy
 from std_msgs.msg import String
 from rclpy.node import Node
-import os
 
 
 class cloud_coloring(Node):
@@ -60,19 +60,15 @@ class cloud_coloring(Node):
 
                 elif str(colour) == "99":
                     exit(0)
-            
+    
 
-
-        
-
-        
-
-def main():
-    rclpy.init()
+def main(args=None):
+    rclpy.init(args=args)
     node = cloud_coloring()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
-
-    rclpy.shutdown()
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()

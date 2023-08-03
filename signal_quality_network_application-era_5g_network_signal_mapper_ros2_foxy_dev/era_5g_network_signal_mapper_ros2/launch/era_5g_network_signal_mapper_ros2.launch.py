@@ -11,8 +11,9 @@ def generate_launch_description():
         executable="signal_mapper",
         name="pcl2_pub_example",
         parameters=[
-            {'base_link':'robot/base_link'},
-            {'semantic_map_frame':'semantic_map'}
+            {'my_base_link2':'base_link'},
+            {'my_map_frame':'map'},
+            {'my_semantic_map_frame':'semantic_map'}
 
         ]
     )
@@ -23,8 +24,8 @@ def generate_launch_description():
         executable="sub_signal_mapper",
         name="pcl2_semantic_mapper",
         parameters=[
-            {'map_frame':'map'},
-            {'semantic_map_frame':'semantic_map'}
+            {'my_map_frame':'map'},
+            {'my_semantic_map_frame':'semantic_map'}
 
         ]
     )
@@ -35,9 +36,9 @@ def generate_launch_description():
         executable="sub_signal_mapper",
         name="pcl2_to_costmap",
         parameters=[
-            {'map_frame':'map'},
-            {'map_topic':'/map'},
-            {'map_metadata_topic':'/robot/map_metadata'}
+            {'my_map_frame':'map'},
+            {'my_map_topic':'/map'},
+            {'my_map_metadata_topic':'/robot/map_metadata'}
 
         ]
     )

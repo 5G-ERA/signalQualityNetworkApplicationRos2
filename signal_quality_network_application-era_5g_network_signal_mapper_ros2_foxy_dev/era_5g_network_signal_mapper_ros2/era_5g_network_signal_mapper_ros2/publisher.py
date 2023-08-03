@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# git commit
+
 import rclpy
 from std_msgs.msg import String
 from influxdb import InfluxDBClient
