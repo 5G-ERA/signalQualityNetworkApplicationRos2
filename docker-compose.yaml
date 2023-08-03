@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  signal-mapper:
+    container_name: signal_mapper_container_ros2
+    image: ghcr.io/5g-era/signal_mapper_ros2:latest
+    environment:
+      MY_BASE_LINK: base_link
+      MY_MAP_FRAME: map
+      MY_SEMANTIC_MAP_FRAME: semantic_map

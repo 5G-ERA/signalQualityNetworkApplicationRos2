@@ -1,10 +1,17 @@
-# signal_quality_network_app_ROS2_Foxy_dev_Branch
+# signal_quality_network_application_ros2
 Code developed  under ROS2 Foxy
 
 
 Running instructions.
 
-*This code was not tested. Awaiting simulator in ROS2.*
+Run using docker compose
+
+Download file "docker-compose.yaml" and open terminal in that file;
+
+Then run:
+```
+docker compose run --rm signal-mapper
+```
 
 
 Install ROS2 Foxy environment.
@@ -80,4 +87,17 @@ While Simulation in ROS2 is running RUN network_signal_mapper_ros2
 ```
 ros2 launch era_5g_network_signal_mapper_ros2 era_5g_network_signal_mapper_ros2.launch.py
 ```
+While Simulation in ROS2 is running RUN network_signal_mapper_ros2
+```
+ros2 launch era_5g_network_signal_mapper_ros2 era_5g_network_signal_mapper_ros2.launch.py
+```
 
+Publish colors accordingly to signal from InfluxDB
+```
+ros2 run era_5g_network_signal_mapper_ros2 publisher
+```
+
+Run following command to create costmap from map and signal quality pointclouds
+```
+ros2 run era_5g_network_signal_mapper_ros2 costmap_translate
+```
