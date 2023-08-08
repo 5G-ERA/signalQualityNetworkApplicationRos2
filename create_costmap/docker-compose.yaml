@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  costmap:
+    container_name: costmap
+    image: ghcr.io/5g-era/signal_mapper_ros2:latest
+    environment:
+      MY_BASE_LINK: robot/base_link
+      MY_MAP_FRAME: map
+      MY_SEMANTIC_MAP_FRAME: semantic_map
+    entrypoint: ["/bin/bash", "-c"]
+    command: ["
+      source /root/ros2_ws/install/setup.bash
+      && export ROS_DOMAIN_ID=34
+      && export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      && ros2 run era_5g_network_signal_mapper_ros2 costmap_translate"]
