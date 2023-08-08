@@ -8,8 +8,8 @@ Running instructions.
 
 ### Download the docke compose files
 ```
-git clone https://github.com/appmdev/test_git_hub.git
-cd test_git_hub
+git clone https://github.com/5G-ERA/signal_quality_network_application_ros2.git
+cd signal_quality_network_application_ros2
 ```
 ### Adjust environment variables in the both files "docker-compose.yaml" from folder create_costmap also
 
