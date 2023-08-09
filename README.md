@@ -22,7 +22,7 @@ docker compose up
 
 
 ```
-cd create_costmap
+cd signal_quality_network_application_ros2/create_costmap
 docker compose up
 ```
 
