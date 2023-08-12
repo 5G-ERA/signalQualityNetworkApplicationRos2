@@ -8,12 +8,14 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 import sensor_msgs_py.point_cloud2 as pcl2
 from nav_msgs.srv import GetMap
 from rclpy.clock import Clock
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
 
 # List of colours from the PointCloud2 that should not be treated as obstacles by the ROS Navigation Stack.
 ACCEPTED_COLOURS = []
 
 
 def metadata_manual_parser(data: str)->dict:
+    '''
     w_temp = data.find("width")
     coma_index = 0
     for x in range(w_temp,w_temp+10):
@@ -65,8 +67,8 @@ def metadata_manual_parser(data: str)->dict:
     resolution = float(data[int(resolution_temp)+11:int(coma_resolution_temp)])
     print("resolution: "+str(resolution))
 
-
-    metadata = {"width": width, "height": height, "origin_x": origin_x, "origin_y":origin_y, "resolution": resolution}
+	'''
+    metadata = {"width": 1695, "height": 2109, "origin_x": -17.1, "origin_y":-31.6, "resolution": 0.02}
 
     return metadata
 
@@ -89,6 +91,7 @@ class Map(object):
         self.width = width
         self.height = height
         self.grid = np.full((height, width), -1.)
+
     def to_message(self):
         """ Return a nav_msgs/OccupancyGrid representation of this map. """
         self.grid_msg = OccupancyGrid()
@@ -178,6 +181,13 @@ class Mapper(Node):
         # CALL SERVICE MAP
         self.get_logger().info("Reading data of original map...", once=True)
         self.get_logger().info('Waiting for map_server service...')
+
+        self.qos_profile = QoSProfile(
+            durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
+            reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE,
+            history=QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+            depth=1
+        )
         client = self.create_client(GetMap, '/map_server/map')
         while not client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('map_server service not available, waiting...')
@@ -206,7 +216,11 @@ class Mapper(Node):
         #self._map_pub.publish(self.grid_msg)
 
         # Create publishers
-        self._map_pub = self.create_publisher(OccupancyGrid, '/map_Semantic', 1)
+        self._map_pub = self.create_publisher(
+            msg_type=OccupancyGrid, 
+            topic='/map_Semantic',
+            qos_profile=self.qos_profile
+        )
         self._map_metadata_pub = self.create_publisher(MapMetaData, '/map_Semantic_metadata', 1)
         self.pcl_sub = self.create_subscription(PointCloud2, '/semantic_pcl', self.pcl_callback, 1)
         self.get_logger().info("Publishing semantic map.", once=True)
@@ -237,11 +251,14 @@ class Mapper(Node):
         # To manipulate the OccupancyGrid and add the pcl2 data, first it needs to be translated into a numpy MaskedArray.
         np_occupancy = self.occupancygrid_to_numpy(self.grid_msg)
         self.get_logger().info("occupancygrid_to_numpy working", once=True)
+        self.get_logger().info("ACCEPTED_COLOURS "+str(ACCEPTED_COLOURS), once=True)
         try:
             for point in pcl_cloud:
                 #print(point)
                 # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
-                if point[3] not in ACCEPTED_COLOURS:
+                #if point[3] not in ACCEPTED_COLOURS:
+                if point[3] !=  8190976: # not in ACCEPTED_COLOURS:
+                    self.get_logger().info("point[3] "+str(point[3]), once=True)
                     #y = int((point[0] - self._map.origin_x) / self._map.resolution)
                     #x = int((point[1] + self._map.origin_y*1 - 9) / self._map.resolution)
 
@@ -315,6 +332,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
