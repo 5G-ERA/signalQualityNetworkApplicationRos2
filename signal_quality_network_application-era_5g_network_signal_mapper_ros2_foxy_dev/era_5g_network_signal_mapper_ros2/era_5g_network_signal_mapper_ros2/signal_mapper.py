@@ -1,17 +1,7 @@
-import math
-
-from geometry_msgs.msg import TransformStamped
-
-import numpy as np
-
-import rclpy
-from rclpy.node import Node
-
-from tf2_ros import TransformBroadcaster
-
 #!/usr/bin/env python3
-import numpy as np
+
 import rclpy
+import numpy as np
 import std_msgs.msg as std_msgs
 import struct
 import tf2_ros
@@ -22,32 +12,22 @@ from geometry_msgs.msg import TransformStamped
 from rclpy.node import Node
 from tf2_ros import TransformBroadcaster
 from tf2_ros import TransformException
-from tf2_ros.buffer import Buffer
-from tf2_ros.transform_listener import TransformListener
-import time
-from rclpy.duration import Duration
+import era_5g_network_signal_mapper_ros2.declare_param as paramm
 
 
 class FramePublisher(Node):
 
     def __init__(self):
-        super().__init__('turtle_tf2_frame_publisher')
+        super().__init__('robot_tf2_frame_publisher')
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
 
-        # Declare and acquire `turtlename` parameter
-        # Declare parameters
-        self.declare_parameter("base_link", rclpy.Parameter.Type.STRING)
-        self.declare_parameter("semantic_map_frame", rclpy.Parameter.Type.STRING)
-
-        # Retreive parameters from launch/yaml file 
-        self.robot_base_frame = self.get_parameter("base_link").get_parameter_value().string_value
-        self.robot_base_frame_param = self.get_parameter("base_link")._name
-
-        self.semantic_map_frame = self.get_parameter("semantic_map_frame").get_parameter_value().string_value
-
-        #self.tf_broadcaster = TransformBroadcaster(self)
+        # Retreive parameters from ENV/ launch/params.yaml file or set default values automaticaly
+        self.get_logger().info('Retriving params signal_mapper', once=True)
+        self.robot_base_frame = paramm.param_set_string(self,'my_base_link', 'base_link')
+        self.map_frame = paramm.param_set_string(self,'my_map_frame', 'map')
+        self.semantic_map_frame = paramm.param_set_string(self,'my_semantic_map_frame', 'semantic_map')
 
         global r, g, b, height, lenght, lamba
         r = 124 # 124
@@ -59,31 +39,20 @@ class FramePublisher(Node):
         lamba = 0.05
 
         # Initialize the transform broadcaster
-        
-
-        self.current_pcl_pub = self.create_publisher(PointCloud2, '/current_semantic_pcl', 10)
-        
+        self.current_pcl_pub = self.create_publisher(PointCloud2, '/current_semantic_pcl', 10)        
         self.pcl_colour_subscriber = self.create_subscription(String, "/pcl_colour",self.signal_color_callback,1)
-
-        #self.tf_buffer = Buffer()
-        #self.tf_listener = TransformListener(self.tf_buffer, self)
 
         self.tf_broadcaster = TransformBroadcaster(self)
         self.timer = self.create_timer(1.0, self.on_timer)
 
     def on_timer(self):
             try:
-                
-                #trans = self.tf_buffer.lookup_transform('base_link', 'map',rclpy.time.Time())
-                trans = self.tf_buffer.lookup_transform("map", "robot/base_link", rclpy.time.Time()) # trans = self.tf_buffer.lookup_transform("base_link", "map", rclpy.time.Time())
+                trans = self.tf_buffer.lookup_transform(self.map_frame, self.robot_base_frame, rclpy.time.Time())
                 self.publish_pointcloud_while_broadcasting(trans)
                 self.create_simple_pointcloud()
 
             except TransformException as ex:
                     self.get_logger().info(str(ex))
-                    #return
-        
-
     
     def publish_pointcloud_while_broadcasting(self,trans):
             
@@ -92,15 +61,10 @@ class FramePublisher(Node):
             # Read message content and assign it to
             # corresponding tf variables
             t.header.stamp = self.get_clock().now().to_msg()
-            t.header.frame_id = 'map'
+            t.header.frame_id = self.map_frame
             t.child_frame_id = self.semantic_map_frame
             # Robot only exists in 2D, thus we get x and y translation
             # coordinates from the message and set the z coordinate to 0
-            roll, pitch, yaw = self.euler_from_quaternion(
-                trans.transform.rotation.x,
-                trans.transform.rotation.y,
-                trans.transform.rotation.z,
-                trans.transform.rotation.w) 
             t.transform.translation.x =   trans.transform.translation.x
             t.transform.translation.y = trans.transform.translation.y
             t.transform.translation.z = trans.transform.translation.z
@@ -108,7 +72,6 @@ class FramePublisher(Node):
             # For the same reason, robot can only rotate around one axis
             # and this why we set rotation in x and y to 0 and obtain
             # rotation in z axis from the message
-            #q = tf_transformations.quaternion_from_euler(0, 0, msg.theta)
             t.transform.rotation.x = trans.transform.rotation.x
             t.transform.rotation.y = trans.transform.rotation.y
             t.transform.rotation.z = trans.transform.rotation.z
@@ -117,38 +80,10 @@ class FramePublisher(Node):
             # Send the transformation
             self.tf_broadcaster.sendTransform(t)
 
-    def euler_from_quaternion(self, x, y, z, w):
-        '''
-        Convert a quaternion into euler angles (roll, pitch, yaw)
-        roll is rotation around x in radians (counterclockwise)
-        pitch is rotation around y in radians (counterclockwise)
-        yaw is rotation around z in radians (counterclockwise)
-        '''
-
-        t0 = +2.0 * (w * x + y * z)
-        t1 = +1.0 - 2.0 * (x * x + y * y)
-        roll_x = math.atan2(t0, t1)
-        
-        t2 = +2.0 * (w * y - z * x)
-        t2 = +1.0 if t2 > +1.0 else t2
-        t2 = -1.0 if t2 < -1.0 else t2
-        pitch_y = math.asin(t2)
-        
-        t3 = +2.0 * (w * z + x * y)
-        t4 = +1.0 - 2.0 * (y * y + z * z)
-        yaw_z = math.atan2(t3, t4)
-        
-        return roll_x, pitch_y, yaw_z # in radians
-
-
     # Set pcl colour callback
     def signal_color_callback(self, msg):
-        self.get_logger().info("COLOR CHANGED!!")
-        self.get_logger().info(msg.data)
-        '''
-        Yellow = Colour([255, 255, 0])
-        Orange = Colour([255, 165, 0])
-        '''
+        self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
+
         global r, g, b
         if msg.data == "GREEN":
             self.get_logger().info("CHANGE TO GREEN")
@@ -162,21 +97,19 @@ class FramePublisher(Node):
             b = 0
         elif msg.data == "BLUE":
             self.get_logger().info("CHANGE TO BLUE")
-            r = 128
+            r = 0
             g = 0
-            b = 0
+            b = 255
         elif msg.data == "YELLOW":
-            self.get_logger().info("CHANGE TO BLUE")
+            self.get_logger().info("CHANGE TO YELLOW")
             r = 255
             g = 255
             b = 0
         elif msg.data == "ORANGE":
-            self.get_logger().info("CHANGE TO BLUE")
+            self.get_logger().info("CHANGE TO ORANGE")
             r = 255
             g = 165
             b = 0
-
-    
 
     def create_simple_pointcloud(self):
 
@@ -218,6 +151,6 @@ def main():
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
-
-    rclpy.shutdown()
-
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
