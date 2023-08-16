@@ -28,33 +28,42 @@ class FramePublisher(Node):
         self.robot_base_frame = paramm.param_set_string(self,'my_base_link', 'base_link')
         self.map_frame = paramm.param_set_string(self,'my_map_frame', 'map')
         self.semantic_map_frame = paramm.param_set_string(self,'my_semantic_map_frame', 'semantic_map')
-
-        global r, g, b, height, lenght, lamba
+        
+        # Variables to compose a colour for representing pointcolour
+        global r, g, b
         r = 124 # 124
         g = 252 # 252
         b = 0   # 0
+
+        # Boundingbox of the pcl2 publish around the robot
+        global height, lenght, lamba
 
         height = 0.3
         lenght = 0.3
         lamba = 0.05
 
-        # Initialize the transform broadcaster
-        self.current_pcl_pub = self.create_publisher(PointCloud2, '/current_semantic_pcl', 10)        
+        # Creating publisher for which will publish cloud formed from pointclouds at current position of robot
+        self.current_pcl_pub = self.create_publisher(PointCloud2, '/current_semantic_pcl', 10)
+        # Creating subscriber which will receive information of signal strength as colour   
         self.pcl_colour_subscriber = self.create_subscription(String, "/pcl_colour",self.signal_color_callback,1)
 
+        # Initialize the transform broadcaster
         self.tf_broadcaster = TransformBroadcaster(self)
         self.timer = self.create_timer(1.0, self.on_timer)
-
+    # 
     def on_timer(self):
             try:
+                # Waiting until transfrom of map_frame and robot_base_frame is available
                 trans = self.tf_buffer.lookup_transform(self.map_frame, self.robot_base_frame, rclpy.time.Time())
-                self.publish_pointcloud_while_broadcasting(trans)
+                # Transforming robot_base_frame to map_frame
+                self.send_transformation_of_frames(trans)
                 self.create_simple_pointcloud()
 
             except TransformException as ex:
                     self.get_logger().info(str(ex))
-    
-    def publish_pointcloud_while_broadcasting(self,trans):
+
+    # Transform frame received from "lookup_transform"; in our case we transform robot_base_frame to map_frame
+    def send_transformation_of_frames(self,trans):
             
             t = TransformStamped()
 
@@ -80,8 +89,11 @@ class FramePublisher(Node):
             # Send the transformation
             self.tf_broadcaster.sendTransform(t)
 
-    # Set pcl colour callback
+    # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
+    # from "pcl_colour_subscriber" which represent signal strength
     def signal_color_callback(self, msg):
+
+
         self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
 
         global r, g, b
@@ -117,6 +129,8 @@ class FramePublisher(Node):
         print(rgb)
 
         cloud_points = []
+
+        # Creating point clouds of the current position of the robot 
         for x in np.arange(0,height,lamba):
             for y in np.arange(-lenght,lenght,lamba):
                 cloud_points.append([x, y, 0.0, rgb])
@@ -131,16 +145,20 @@ class FramePublisher(Node):
         
         # The fields specify what the bytes represents. The first 4 bytes 
         # represents the x-coordinate, the next 4 the y-coordinate, etc.
+        
         fields = [
             PointField(name='x', offset=0, datatype=ros_dtype, count=1),
             PointField(name='y', offset=4, datatype=ros_dtype, count=1),
             PointField(name='z', offset=8, datatype=ros_dtype, count=1),
+            # The 4th set of bytes represent colour of pointcloud
             PointField(name='rgb', offset=12, datatype=PointField.UINT32, count=1)
         ]
-
+        # creating a cloud and store in pcl_msg
         pcl_msg = pcl2.create_cloud(header, fields, cloud_points)
         pcl_msg.header.stamp = self.get_clock().now().to_msg()
         pcl_msg.header.frame_id = self.semantic_map_frame
+
+        # Publishing cloud created at the current possition of the robot
         self.current_pcl_pub.publish(pcl_msg)
 
 
