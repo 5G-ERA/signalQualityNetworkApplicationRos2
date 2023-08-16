@@ -23,7 +23,7 @@ class FramePublisher(Node):
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
 
-        # Retreive parameters from ENV/ launch/params.yaml file or set default values automaticaly
+        # Retreive parameters from param / launch or params.yaml file / ENV or set default values automaticaly
         self.get_logger().info('Retriving params signal_mapper', once=True)
         self.robot_base_frame = paramm.param_set_string(self,'my_base_link', 'base_link')
         self.map_frame = paramm.param_set_string(self,'my_map_frame', 'map')

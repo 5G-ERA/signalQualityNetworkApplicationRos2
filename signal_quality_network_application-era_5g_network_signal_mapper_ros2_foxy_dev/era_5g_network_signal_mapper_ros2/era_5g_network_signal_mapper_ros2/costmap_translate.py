@@ -15,6 +15,7 @@ import era_5g_network_signal_mapper_ros2.declare_param as paramm
 # List of colours from the PointCloud2 that should not be treated as obstacles by the ROS Navigation Stack.
 ACCEPTED_COLOURS = []
 
+# Parser of map information; collecting "width" "height" "resolution" of the map; "origin_x" "origin_y" of the robot;
 def metadata_manual_parser(data: str)->dict:
     
     w_temp = data.find("width")
@@ -87,6 +88,8 @@ GreenInt = 8190976
 ACCEPTED_COLOURS.append(Green.binary)
 ACCEPTED_COLOURS.append(GreenInt)
 
+# This class will recreate a new map from given parameteres "origin_x", "origin_y", "resolution", "width", "height";
+# And will assign frame_id as "map_frame" from "toMap(self, node, map_data, map_frame: str)" inside this class
 class Map(object):
     def __init__(self, origin_x, origin_y, resolution, width, height):
         self.origin_x = origin_x
@@ -96,7 +99,7 @@ class Map(object):
         self.height = height
         self.grid = np.full((height, width), -1.)
 
-    def toMap(self, node, map_data,map_frame: str):
+    def toMap(self, node, map_data, map_frame: str):
 
         """ Return a nav_msgs/OccupancyGrid representation of this map. """
         self.grid_msg = OccupancyGrid()
@@ -116,7 +119,7 @@ class Map(object):
         point_map = Point(x=float(self.origin_x ), y=float(self.origin_y), z=0.0)
         quat =  Quaternion(x=0.0,y=0.0,z=0.0,w=1.0)
         self.grid_msg.info.origin = Pose(position=point_map, orientation=quat)
-        self.grid_msg.data = map_data.map.data#[:]
+        self.grid_msg.data = map_data.map.data
         return self.grid_msg
     
     
@@ -124,21 +127,26 @@ class Mapper(Node):
     def __init__(self):
         super().__init__('pcl2_to_costmap')
 
+        # In the self.response will be stored row map data from "/map_server/map"
         self.response = None
-        # Retreive parameters from ENV/ launch/params.yaml file or set default values automaticaly
+        # Retreive parameters from param / launch or params.yaml file / ENV or set default values automaticaly
         self.map_frame: str = paramm.param_set_string(self,'my_map_frame', 'map')       
 
         # CALL SERVICE MAP
         self.get_logger().info("Reading data of original map...", once=True)
         self.get_logger().info('Waiting for map_server service...')
 
+        # creating custom qos_profile of map
         self.qos_profile = QoSProfile(
             durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
             reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE,
             history=QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
             depth=1
         )
-        client = self.create_client(GetMap, '/map_server/map')
+
+        # Creating request to receive map data from "/map_server/map"
+        # "/map_server/map" represent costmap
+        client = self.create_client(GetMap, ' self.pcl_sub')
         while not client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('map_server service not available, waiting...')
         # Create the request message
@@ -149,13 +157,16 @@ class Mapper(Node):
         if future.result() is not None:
             self.response = future.result()
             # Process the response here
+            # In metadata we store parsed information of map received from "/map_server/map" 
             metadata = metadata_manual_parser(str(self.response))
             self.get_logger().info('Received map data form map server!')
             # You can access the map and metadata using response.map and response.map_metadata
         else:
             self.get_logger().info('Failed to receive map data.')
 
+        # Creating a new identical map received from "/map_server/map"
         self._map = Map(metadata['origin_x'], metadata['origin_y'], metadata['resolution'], metadata['width'], metadata['height'])
+        # Assigning frame_id 
         self.grid_msg = self._map.toMap(self, self.response, self.map_frame)
 
         # Create publishers
@@ -164,32 +175,22 @@ class Mapper(Node):
             topic='/map_Semantic',
             qos_profile=self.qos_profile
         )
-        self._map_metadata_pub = self.create_publisher(MapMetaData, '/map_Semantic_metadata', 1)
+        # Review and delete or uncomment next line
+        #self._map_metadata_pub = self.create_publisher(MapMetaData, '/map_Semantic_metadata', 1)
+        # Create a subscriber to receive information of all collection of clouds which represent signal strenght
         self.pcl_sub = self.create_subscription(PointCloud2, '/semantic_pcl', self.pcl_callback, 1)
-        self.get_logger().info("Publishing semantic map.", once=True)
-        
+
+    # Transformation into into a numpy MaskedArray.
     def occupancygrid_to_numpy(self, msg):
         data = np.asarray(msg.data, dtype=np.int8).reshape(msg.info.height, msg.info.width)
         return np.ma.array(data, mask=data==-1, fill_value=-1)
     
-    def numpy_to_occupancy_grid(self, arr, info=None):
-        if not len(arr.shape) == 2:
-            raise TypeError('Array must be 2D')
-        if not arr.dtype == np.int8:
-            raise TypeError('Array must be of int8s')
-        grid = OccupancyGrid()
-        if isinstance(arr, np.ma.MaskedArray):
-            arr = arr.data
-        grid.data = arr.ravel()
-        grid.header.stamp = self.get_clock().now().to_msg()
-        grid.header.frame_id = self.map_frame
-        grid.info = info
-        return grid
-    
     def pcl_callback(self, pointcloud_msg):
-        
+        # pointcloud_msg is all collection of clouds which represent signal strenght
+        # pcl_cloud represent a list from all collections of clouds received from signal strenght
         pcl_cloud = list(pcl2.read_points(pointcloud_msg, skip_nans=True))
         # To manipulate the OccupancyGrid and add the pcl2 data, first it needs to be translated into a numpy MaskedArray.
+        # On top of the received map " self._map" will be added obstacles from pcl2 if they exist and are in "ACCEPTED_COLOURS"
         np_occupancy = self.occupancygrid_to_numpy(self.grid_msg)
         self.get_logger().info("occupancygrid_to_numpy working", once=True)
         self.get_logger().info("ACCEPTED_COLOURS "+str(ACCEPTED_COLOURS), once=True)
@@ -207,7 +208,10 @@ class Mapper(Node):
             print("ERROR: "+str(e))        
 
         try:
+            # Publish combined map with pcl2 as obstacle. 
             self._map_pub.publish(self.grid_msg)
+            self.get_logger().info("Publishing semantic map.", once=True)
+        
         except Exception as e:
             print("SECOND ERROR: "+str(e))
         

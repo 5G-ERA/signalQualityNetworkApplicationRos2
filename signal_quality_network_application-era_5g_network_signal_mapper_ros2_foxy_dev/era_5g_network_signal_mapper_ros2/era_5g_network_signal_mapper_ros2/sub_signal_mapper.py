@@ -22,7 +22,7 @@ class SubSignalMapper(Node):
             # it starts receiving tf2 transformations over the wire, and buffers them for up to "timeout" declared "sub_callback(pcl)".
             self.listener = tf2_ros.TransformListener(self.tf_buffer,self)
 
-            # Retreive parameters from ENV/ launch/params.yaml file or set default values automaticaly
+            # Retreive parameters from param / launch or params.yaml file / ENV or set default values automaticaly
             self.get_logger().info("Retriving params sub_signal_mapper", once=True)
             self.map_frame = paramm.param_set_string(self,'my_map_frame', 'map')
             self.semantic_map_frame = paramm.param_set_string(self,'my_semantic_map_frame', 'semantic_map')
