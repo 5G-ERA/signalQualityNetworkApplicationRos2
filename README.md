@@ -16,8 +16,7 @@ Make sure to source both your workspace afterwards and the ros2 installation und
 ```
 ros2 launch era_5g_network_signal_mapper_ros2 era_5g_network_signal_mapper_ros2.launch.py
 ```
-
-![fixros22](https://github.com/5G-ERA/signal_quality_network_application_ros2/assets/26432703/ab59d76e-8baf-40c2-af21-34d7dbf67f57)
+![image](https://github.com/5G-ERA/signal_quality_network_application_ros2/assets/26432703/19411486-743c-4fe0-a5e6-3dd4fcd7e37b)
 
 
 You may configure beforehand if you so wish, the boundingbox of the robot according to its geometry. This example assumes a RobotNik [SummitXL](https://robotnik.eu/products/mobile-robots/summit-xl-en-2/) geometry. 
@@ -49,7 +48,8 @@ You can either run this node at the begining of your semantic mapping process or
 ```
 ros2 run era_5g_network_signal_mapper_ros2 costmap_translate
 ```
-![ros2_fix](https://github.com/5G-ERA/signal_quality_network_application_ros2/assets/26432703/dbfe301f-35c2-4e9a-bff0-387fb4cd26a0)
+![image](https://github.com/5G-ERA/signal_quality_network_application_ros2/assets/26432703/ce22ea4a-9359-41b4-aa77-47287ddc5ae5)
+
 
 ## Saving the new map and load it to map_server:
 ```
