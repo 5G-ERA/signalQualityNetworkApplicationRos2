@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
+
 from launch import LaunchDescription
 from launch_ros.actions import Node
+import os
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
+
     ld = LaunchDescription()
+
+    config = os.path.join(
+        get_package_share_directory('era_5g_network_signal_mapper_ros2'),
+        'config',
+        'params.yaml'
+        )
 
     # Publish a pcl2 around the robot position at time t.
     signal_mapper_node = Node(
         package="era_5g_network_signal_mapper_ros2",
         executable="signal_mapper",
         name="pcl2_pub_example",
-        parameters=[
-            {'base_link':'robot/base_link'},
-            {'semantic_map_frame':'semantic_map'}
-
-        ]
+        parameters=[config]
     )
 
     # Publish a concatenated (historical) pcl2 from the signal_mapper publisher pcl2.
@@ -22,11 +28,7 @@ def generate_launch_description():
         package="era_5g_network_signal_mapper_ros2",
         executable="sub_signal_mapper",
         name="pcl2_semantic_mapper",
-        parameters=[
-            {'map_frame':'map'},
-            {'semantic_map_frame':'semantic_map'}
-
-        ]
+        parameters=[config]
     )
 
     # Publish a concatenated (historical) pcl2 from the signal_mapper publisher pcl2.
@@ -34,12 +36,7 @@ def generate_launch_description():
         package="era_5g_network_signal_mapper_ros2",
         executable="sub_signal_mapper",
         name="pcl2_to_costmap",
-        parameters=[
-            {'map_frame':'map'},
-            {'map_topic':'/map'},
-            {'map_metadata_topic':'/robot/map_metadata'}
-
-        ]
+        parameters=[config]
     )
     
     ld.add_action(signal_mapper_node)
