@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# git commit
+
 import rclpy
 from std_msgs.msg import String
 from influxdb import InfluxDBClient
@@ -79,11 +79,11 @@ class influx_coloring(Node):
                     print(e)
                     self.get_logger().info(e, once=False)
                 
-
         try:
             handle_keyboard()
         except Exception as e:
                 self.get_logger().info(e, once=False)
+
 
 def main():
     rclpy.init()
@@ -93,6 +93,6 @@ def main():
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
-
-    rclpy.shutdown()
-
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
