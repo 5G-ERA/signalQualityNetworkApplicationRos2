@@ -1,0 +1,20 @@
+services:
+
+  sqm-signal_mapper:
+    container_name: container_signal_mapper
+    image: signal-mapper:1.0
+    environment:
+      ROS_DOMAIN_ID: 0
+      RMW_IMPLEMENTATION: "rmw_cyclonedds_cpp"
+    # Networking and IPC for ROS 2
+    network_mode: host
+    ipc: host
+  sqm-sub_signal_mapper:
+    container_name: container_sub_signal_mapper
+    image: sub-signal-mapper:1.0
+    environment:
+      ROS_DOMAIN_ID: 0
+      RMW_IMPLEMENTATION: "rmw_cyclonedds_cpp"
+    # Networking and IPC for ROS 2
+    network_mode: host
+    ipc: host
