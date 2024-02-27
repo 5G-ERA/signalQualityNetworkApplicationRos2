@@ -4,7 +4,7 @@ This package allows the robot to create semantic maps that can later be translat
 
 To launch the semantic mapping, which creates a pointcloud2 around the robot boundingbox, run:
 # Requirements and setup:
-This code was tested in ROS 2 Humble and Foxy. Copy the content of this repository by using either git clone or manual download and paste it to your /src folder in your ros2 workspace. Then follow by building the ws.
+This code was tested in ROS 2 Humble and Foxy. Copy the content of this repository by using either git clone or manual download.
 
 ```
 # LAUNCH SIMULATION 
