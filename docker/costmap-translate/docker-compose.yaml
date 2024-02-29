@@ -1,0 +1,12 @@
+services:
+
+  sqm-costmap_translate:
+    container_name: container_costmap_translate
+    image: ghcr.io/5g-era/costmap_translate:1.0
+    environment:
+      ROS_DOMAIN_ID: 0
+      #RMW_IMPLEMENTATION: "rmw_cyclonedds_cpp"
+      RMW_FASTRTPS_PROFILE: "/ros2_ws/src/DEFAULT_FASTRTPS_PROFILES.xml"
+    # Networking and IPC for ROS 2
+    network_mode: host
+    ipc: host

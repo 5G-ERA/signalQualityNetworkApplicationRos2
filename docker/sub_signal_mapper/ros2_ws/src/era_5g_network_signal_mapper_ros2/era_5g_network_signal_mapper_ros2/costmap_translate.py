@@ -146,7 +146,7 @@ class Mapper(Node):
 
         # Creating request to receive map data from "/map_server/map"
         # "/map_server/map" represent costmap
-        client = self.create_client(GetMap, ' self.pcl_sub')
+        client = self.create_client(GetMap, '/map_server/map')
         while not client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('map_server service not available, waiting...')
         # Create the request message

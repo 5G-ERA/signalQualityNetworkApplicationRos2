@@ -1,0 +1,137 @@
+{
+    "id": "c1e383cd-61f5-40d7-abe1-0796919ed8b0",
+    "name": "signal-quality",
+    "priority": "Low",
+    "isDeterministic": false,
+    "tags": [],
+    "actionSequence": [
+        {
+            "id": "c3a814f3-8d1f-41cd-b467-e964e1520de1",
+            "name": "signal-quality",
+            "priority": "Normal",
+            "order": 0,
+            "minimumNumCores": null,
+            "minimumRam": 1,
+            "singleNetAppEntryPoint": false,
+            "tags": [],
+            "services": [
+                {
+                    "id": "f5b8affd-91fa-44db-b1e2-bab0947859e2",
+                    "name": "signal-quality",
+                    "type": null,
+                    "isReusable": false,
+                    "rosTopicsPub": [
+                        {
+                            "name": "/current_semantic_pcl",
+                            "type": "PointCloud2",
+                            "description": "Topic that publishes the results of the NetApp",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": null
+                        },
+                        {
+                            "name": "/semantic_pcl",
+                            "type": "PointCloud2",
+                            "description": "Topic that publishes the results of the NetApp",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": null
+                        },
+                        {
+                            "name": "/map_Semantic",
+                            "type": "OccupancyGrid",
+                            "description": "Topic that publishes the results of the NetApp",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": null
+                        }
+
+                    ],
+                    "rosTopicsSub": [
+                        {
+                            "name": "/pcl_colour",
+                            "type": "String",
+                            "description": "culpa sit",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": null
+                        },
+                        {
+                            "name": "/amcl_pose",
+                            "type": "PoseWithCovarianceStamped",
+                            "description": "culpa sit",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": {"durability":"TRANSIENT_LOCAL","reliability":"RELIABLE","history":"KEEP_LAST","depth":1}
+                            
+                        },
+                        {
+                            "name": "/current_semantic_pcl",
+                            "type": "PointCloud2",
+                            "description": "culpa sit",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": null
+                        },
+                        {
+                            "name": "/semantic_pcl",
+                            "type": "PointCloud2",
+                            "description": "culpa sit",
+                            "enabled": true,
+                            "compression": null,
+                            "qos": null
+                        }
+                    ],
+                    "rosActions": [],
+                    "rosServices": [{
+                        "name": "/map_server/map",
+                        "type": "nav_msgs/srv/GetMap",
+                        "qos": null
+                    }],
+                    "rosTransforms": [],
+                    "rosVersion": 2,
+                    "rosDistro": "Humble",
+                    "family": null,
+                    "minimumRam": 1,
+                    "minimumNumOfCores": 0,
+                    "ram": {
+                        "minimum": 1,
+                        "optimal": 0,
+                        "priority": "Low"
+                    },
+                    "numberOfCores": {
+                        "minimum": 0,
+                        "optimal": 0,
+                        "priority": "Low"
+                    },
+                    "diskStorage": {
+                        "minimum": 0,
+                        "optimal": 0,
+                        "priority": "Low"
+                    },
+                    "throughput": {
+                        "minimum": 0,
+                        "optimal": 0,
+                        "priority": "Low"
+                    },
+                    "latency": {
+                        "minimum": 0,
+                        "optimal": 0,
+                        "priority": "Low"
+                    },
+                    "onboardedTime": "2023-11-21T11:02:23.6162101",
+                    "tags": [],
+                    "appliedPolicies": [],
+                    "containerImage": {
+                        "id": "e1012413-8df5-4bf4-8c65-f8ca214ce11f",
+                        "name": "signal-quality",
+                        "lastUpdateTime": "0001-01-01T00:00:00",
+                        "description": "The example network application onboarding for the webinar",
+                        "k8sDeployment": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: signal-quality-map\nspec:\n  selector:\n    matchLabels:\n      name: signal-quality-map\n  template:\n    metadata:\n      labels:\n        name: signal-quality-map\n    spec:\n      nodeSelector:\n        kubernetes.io/os: linux\n      containers:\n        - name: signal-mapper\n          image: ghcr.io/5g-era/signal-mapper:1.0\n          imagePullPolicy: Always\n          resources: {}\n        - name: sub-signal-mapper\n          image: ghcr.io/5g-era/sub-signal-mapper:1.0\n          imagePullPolicy: Always\n          resources: {}\n        - name: costmap-translate\n          image: ghcr.io/5g-era/costmap-translate:1.0\n          imagePullPolicy: Always\n          resources: {}",
+                        "k8sService": null
+                    }
+                }
+            ]
+        }
+    ]
+}

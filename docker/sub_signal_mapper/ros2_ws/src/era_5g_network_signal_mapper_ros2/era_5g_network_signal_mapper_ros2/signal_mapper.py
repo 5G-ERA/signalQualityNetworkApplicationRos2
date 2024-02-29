@@ -32,6 +32,7 @@ class FramePublisher(Node):
         self.robot_base_frame = paramm.param_set_string(self,'my_base_link', 'base_footprint')
         self.map_frame = paramm.param_set_string(self,'my_map_frame', 'map')
         self.semantic_map_frame = paramm.param_set_string(self,'my_semantic_map_frame', 'semantic_map')
+        self.topic_amcl = paramm.param_set_string(self,'robot_topic_position', '/amcl_pose')
         
         # Variables to compose a colour for representing pointcolour
         global r, g, b, confidence, amcl_pose_msg
@@ -60,7 +61,7 @@ class FramePublisher(Node):
             depth=1)
         
         self.model_pose_sub = self.create_subscription(PoseWithCovarianceStamped,
-                                                '/amcl_pose',
+                                                self.topic_amcl,
                                                 self._amclPoseCallback,
                                                 amcl_pose_qos)
         # Initialize the transform broadcaster
