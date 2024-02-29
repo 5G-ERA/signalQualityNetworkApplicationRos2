@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signal-quality-map
+spec:
+  selector:
+    matchLabels:
+      name: signal-quality-map
+  template:
+    metadata:
+      labels:
+        name: signal-quality-map
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: signal-mapper
+          image: ghcr.io/5g-era/signal-mapper:1.0
+          imagePullPolicy: Always
+          resources: {}
+        - name: sub-signal-mapper
+          image: ghcr.io/5g-era/sub-signal-mapper:1.0
+          imagePullPolicy: Always
+          resources: {}
+        - name: costmap-translate
+          image: ghcr.io/5g-era/costmap-translate:1.0
+          imagePullPolicy: Always
+          resources: {}

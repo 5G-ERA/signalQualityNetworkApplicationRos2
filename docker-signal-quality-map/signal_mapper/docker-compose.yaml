@@ -1,0 +1,12 @@
+services:
+
+  sqm-server:
+    container_name: container_signal_mapper
+    image: ghcr.io/5g-era/signal-mapper:1.0
+    environment:
+      ROS_DOMAIN_ID: 0
+      RMW_IMPLEMENTATION: "rmw_cyclonedds_cpp"
+      ROBOT_TOPIC_POSITION: "amcl_pose"
+    # Networking and IPC for ROS 2
+    network_mode: host
+    ipc: host

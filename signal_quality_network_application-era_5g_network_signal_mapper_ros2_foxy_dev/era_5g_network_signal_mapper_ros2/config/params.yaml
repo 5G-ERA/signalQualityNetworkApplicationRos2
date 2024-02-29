@@ -1,3 +1,0 @@
-pcl2_pub_example:
-  ros__parameters:
-    base_link: "robot_base_link"

@@ -1,0 +1,16 @@
+pcl2_pub_example2:
+  ros__parameters:
+    my_base_link: 'base_link'
+    my_semantic_map_frame: 'semantic_map'
+    my_map_frame: 'map'
+
+pcl2_semantic_mapper2:
+  ros__parameters:
+    my_semantic_map_frame: 'semantic_map'
+    my_map_frame: 'map'
+
+pcl2_semantic_mapper2:
+  ros__parameters:    
+    my_map_frame: 'map'
+    my_map_topic: '/map'
+    my_map_metadata_topic: '/robot/map_metadata'
