@@ -73,7 +73,6 @@ class FramePublisher(Node):
         try:
             self.get_logger().info('Sending Position of robot', once=True)
             #global amcl_pose_msg
-            print("2")
             self.send_transformation_of_frames2(self.amcl_pose_msg)
             self.create_simple_pointcloud()
 
@@ -82,7 +81,6 @@ class FramePublisher(Node):
 
     def _amclPoseCallback(self, msg):
         #global amcl_pose_msg
-        print("1")
         self.amcl_pose_msg = msg
         self.initial_pose_received = True
         self.send_transformation_of_frames2(self.amcl_pose_msg)

@@ -30,10 +30,10 @@ class cloud_coloring(Node):
 
                 elif str(colour) == "2":
                     msg = String()
-                    msg.data = "YELLOW"
-                    print("YELLOW")
+                    msg.data = "GREEN"
+                    print("GREEN")
                     self.pub.publish(msg)
-                    self.get_logger().info("Publish YELLOW", once=True)                    
+                    self.get_logger().info("Publish GREEN", once=True)                    
 
                 elif str(colour) == "3":
                     print("BLUE")
@@ -43,11 +43,11 @@ class cloud_coloring(Node):
                     self.get_logger().info("Publish BLUE", once=True)
 
                 elif str(colour) == "4":
-                    print("GREEN")
+                    print("YELLOW")
                     msg = String()
-                    msg.data = "GREEN"
+                    msg.data = "YELLOW"
                     self.pub.publish(msg)
-                    self.get_logger().info("Publish GREEN", once=True)
+                    self.get_logger().info("Publish YELLOW", once=True)
 
                 elif str(colour) == "5":
                     print("ORANGE")

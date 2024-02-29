@@ -10,11 +10,6 @@ from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolic
 from rclpy.qos import QoSProfile
 
 
-
-# This  Script is under development
-#
-# This node will create confidence layer
-#
 class get_data_from_pcl2(Node):
 
     def __init__(self):

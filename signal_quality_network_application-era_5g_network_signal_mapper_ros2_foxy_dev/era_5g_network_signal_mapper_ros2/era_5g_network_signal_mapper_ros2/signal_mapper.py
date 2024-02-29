@@ -16,6 +16,7 @@ from tf2_ros import TransformBroadcaster
 from tf2_ros import TransformException
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
 from rclpy.qos import QoSProfile
+import time
 
 
 class FramePublisher(Node):
@@ -31,6 +32,7 @@ class FramePublisher(Node):
         self.robot_base_frame = paramm.param_set_string(self,'my_base_link', 'base_footprint')
         self.map_frame = paramm.param_set_string(self,'my_map_frame', 'map')
         self.semantic_map_frame = paramm.param_set_string(self,'my_semantic_map_frame', 'semantic_map')
+        self.topic_amcl = paramm.param_set_string(self,'robot_topic_position', '/amcl_pose')
         
         # Variables to compose a colour for representing pointcolour
         global r, g, b, confidence, amcl_pose_msg
@@ -59,28 +61,31 @@ class FramePublisher(Node):
             depth=1)
         
         self.model_pose_sub = self.create_subscription(PoseWithCovarianceStamped,
-                                                '/amcl_pose',
+                                                self.topic_amcl,
                                                 self._amclPoseCallback,
                                                 amcl_pose_qos)
         # Initialize the transform broadcaster
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.timer = self.create_timer(1.0, self.on_timer)
+        #time.sleep(2)
+        #self.timer = self.create_timer(1.0, self.on_timer)
     # 
     def on_timer(self):
         try:
             self.get_logger().info('Sending Position of robot', once=True)
-            global amcl_pose_msg
-            self.send_transformation_of_frames2(amcl_pose_msg)
+            #global amcl_pose_msg
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
             self.create_simple_pointcloud()
 
         except TransformException as ex:
-                self.get_logger().info(str(ex))
+            self.get_logger().info(str(ex))
 
     def _amclPoseCallback(self, msg):
-        global amcl_pose_msg
-        amcl_pose_msg = msg
+        #global amcl_pose_msg
+        self.amcl_pose_msg = msg
         self.initial_pose_received = True
-        return
+        self.send_transformation_of_frames2(self.amcl_pose_msg)
+        self.create_simple_pointcloud()
+        #return
 
     # Transform frame received from "lookup_transform"; in our case we transform robot_base_frame to map_frame
    
