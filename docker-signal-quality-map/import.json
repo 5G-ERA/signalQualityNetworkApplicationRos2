@@ -23,7 +23,7 @@
                     "rosTopicsPub": [
                         {
                             "name": "/current_semantic_pcl",
-                            "type": "PointCloud2",
+                            "type": "sensor_msgs/PointCloud2",
                             "description": "Topic that publishes the results of the NetApp",
                             "enabled": true,
                             "compression": null,
@@ -31,7 +31,7 @@
                         },
                         {
                             "name": "/semantic_pcl",
-                            "type": "PointCloud2",
+                            "type": "sensor_msgs/PointCloud2",
                             "description": "Topic that publishes the results of the NetApp",
                             "enabled": true,
                             "compression": null,
@@ -39,7 +39,7 @@
                         },
                         {
                             "name": "/map_Semantic",
-                            "type": "OccupancyGrid",
+                            "type": "nav_msgs/msg/OccupancyGrid",
                             "description": "Topic that publishes the results of the NetApp",
                             "enabled": true,
                             "compression": null,
@@ -50,7 +50,7 @@
                     "rosTopicsSub": [
                         {
                             "name": "/pcl_colour",
-                            "type": "String",
+                            "type": "std_msgs/msg/String",
                             "description": "culpa sit",
                             "enabled": true,
                             "compression": null,
@@ -58,7 +58,7 @@
                         },
                         {
                             "name": "/amcl_pose",
-                            "type": "PoseWithCovarianceStamped",
+                            "type": "geometry_msgs/PoseWithCovarianceStamped",
                             "description": "culpa sit",
                             "enabled": true,
                             "compression": null,
@@ -67,7 +67,7 @@
                         },
                         {
                             "name": "/current_semantic_pcl",
-                            "type": "PointCloud2",
+                            "type": "sensor_msgs/PointCloud2",
                             "description": "culpa sit",
                             "enabled": true,
                             "compression": null,
@@ -75,7 +75,7 @@
                         },
                         {
                             "name": "/semantic_pcl",
-                            "type": "PointCloud2",
+                            "type": "sensor_msgs/PointCloud2",
                             "description": "culpa sit",
                             "enabled": true,
                             "compression": null,
