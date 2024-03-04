@@ -29,6 +29,9 @@ You may configure beforehand if you so wish, the boundingbox of the robot accord
     
 Lamba is the amount of points to be created along the height and lenght. It may stay at 0.05 to look like the pictures presented in this tutorial.
 
+[![Demo Video](http://img.youtube.com/vi/CMcDZyFyge8/0.jpg)](https://www.youtube.com/watch?v=CMcDZyFyge8)
+
+
 ## Control semantic color publications:
 
 The ros node signal mapper subscribes to a color topic and it will change the color of the current pointcloud depending on the latest recived data of the colors.

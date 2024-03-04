@@ -29,7 +29,8 @@ setup(
             "costmap_translate = era_5g_network_signal_mapper_ros2.costmap_translate:main",
             "colour_pub = era_5g_network_signal_mapper_ros2.colour_pub:main",
             "publisher = era_5g_network_signal_mapper_ros2.publisher:main",
-            "get_data = era_5g_network_signal_mapper_ros2.get_data:main"
+            "get_data = era_5g_network_signal_mapper_ros2.get_data:main",            
+            "current_color = era_5g_network_signal_mapper_ros2.current_color:main"            
             
         ],
     },

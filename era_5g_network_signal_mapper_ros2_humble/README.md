@@ -119,11 +119,14 @@ ros2 service call /semantic_map_server/load_map nav2_msgs/srv/LoadMap "{map_url:
 ```
 
 ### Get current colour of the semantic map
-
+In order t use this feature the pakage must be run before the pointcloud is loaded either via saving and loading semantic poitcloud as a static file or running signal_mapper package.
 from termianl:
 ```
 ros2 run era_5g_network_signal_mapper_ros2 current_color
 ```
+
+The topic "/current_color" will publish current color of the location of the robot
+
 
 ### ROS Service for saving and loading semantic poitcloud as a static file
 
