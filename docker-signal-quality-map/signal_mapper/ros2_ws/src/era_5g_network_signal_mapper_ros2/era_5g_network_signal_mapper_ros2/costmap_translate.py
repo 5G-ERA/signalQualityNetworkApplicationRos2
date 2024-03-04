@@ -184,36 +184,68 @@ class Mapper(Node):
     def occupancygrid_to_numpy(self, msg):
         data = np.asarray(msg.data, dtype=np.int8).reshape(msg.info.height, msg.info.width)
         return np.ma.array(data, mask=data==-1, fill_value=-1)
-    
-    def pcl_callback(self, pointcloud_msg):
-        # pointcloud_msg is all collection of clouds which represent signal strenght
-        # pcl_cloud represent a list from all collections of clouds received from signal strenght
-        pcl_cloud = list(pcl2.read_points(pointcloud_msg, skip_nans=True))
-        # To manipulate the OccupancyGrid and add the pcl2 data, first it needs to be translated into a numpy MaskedArray.
-        # On top of the received map " self._map" will be added obstacles from pcl2 if they exist and are in "ACCEPTED_COLOURS"
-        np_occupancy = self.occupancygrid_to_numpy(self.grid_msg)
-        self.get_logger().info("occupancygrid_to_numpy working", once=True)
-        self.get_logger().info("ACCEPTED_COLOURS "+str(ACCEPTED_COLOURS), once=True)
-        try:
+
+    def fill_map_dynamic_size(self,pcl_cloud):
+            # Define cuántos puntos agregar en cada dirección desde el punto original
+            np_occupancy = self.occupancygrid_to_numpy(self.grid_msg)
             for point in pcl_cloud:
+                try:
+                    size_refactor = int(round(point[5])*10)
+                    # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
+                    if point[3] not in ACCEPTED_COLOURS:
+                        self.get_logger().info("point[3] "+str(point[3]), once=True)
+                        # Obtener las coordenadas x e y del punto original
+                        original_x = int((point[0] - self._map.origin_x) / self._map.resolution)
+                        original_y = int((point[1] - self._map.origin_y) / self._map.resolution)
+                        # Iterar sobre cada dirección (arriba, abajo, izquierda, derecha) y agregar puntos adicionales
+                        for dx in range(-size_refactor, size_refactor + 1):
+                            for dy in range(-size_refactor, size_refactor + 1):
+                                # Calcular las nuevas coordenadas x e y para el punto adicional
+                                new_x = original_x + dx
+                                new_y = original_y + dy
+                                # Asignar un valor de ocupación al punto adicional en la grilla de ocupación
+                                np_occupancy[new_y][new_x] = 100.0
+                except Exception as e:
+                    print("ERROR: "+str(e))
+    def fill_map_static_size(self,pcl_cloud,size):
+        # Define cuántos puntos agregar en cada dirección desde el punto original
+        size_refactor = int(size * 10)
+        np_occupancy = self.occupancygrid_to_numpy(self.grid_msg)
+        for point in pcl_cloud:
+            try:
                 # Only pcl points with colour not in the accepted array will be considered obstacles and added to the grid with prob(100)
                 if point[3] not in ACCEPTED_COLOURS:
-               
                     self.get_logger().info("point[3] "+str(point[3]), once=True)
-                    y = int((point[0] - self._map.origin_x) / self._map.resolution)
-                    x = int((point[1] - self._map.origin_y) / self._map.resolution)
-                    np_occupancy[x][y] = 100.
-            
-        except Exception as e:
-            print("ERROR: "+str(e))        
+                    # Obtener las coordenadas x e y del punto original
+                    original_x = int((point[0] - self._map.origin_x) / self._map.resolution)
+                    original_y = int((point[1] - self._map.origin_y) / self._map.resolution)
+                    # Iterar sobre cada dirección (arriba, abajo, izquierda, derecha) y agregar puntos adicionales
+                    for dx in range(-size_refactor, size_refactor + 1):
+                        for dy in range(-size_refactor, size_refactor + 1):
+                            # Calcular las nuevas coordenadas x e y para el punto adicional
+                            new_x = original_x + dx
+                            new_y = original_y + dy
+                            # Asignar un valor de ocupación al punto adicional en la grilla de ocupación
+                            np_occupancy[new_y][new_x] = 100.0
+            except Exception as e:
+                print("ERROR: "+str(e))
 
-        try:
-            # Publish combined map with pcl2 as obstacle. 
-            self._map_pub.publish(self.grid_msg)
-            self.get_logger().info("Publishing semantic map.", once=True)
-        
-        except Exception as e:
-            print("SECOND ERROR: "+str(e))
+
+    def pcl_callback(self, pointcloud_msg):
+            # pointcloud_msg is all collection of clouds which represent signal strenght
+            # pcl_cloud represent a list from all collections of clouds received from signal strenght
+            pcl_cloud = list(pcl2.read_points(pointcloud_msg, skip_nans=True))
+            # To manipulate the OccupancyGrid and add the pcl2 data, first it needs to be translated into a numpy MaskedArray.
+            # On top of the received map " self._map" will be added obstacles from pcl2 if they exist and are in "ACCEPTED_COLOURS"
+            self.get_logger().info("occupancygrid_to_numpy working", once=True)
+            self.get_logger().info("ACCEPTED_COLOURS "+str(ACCEPTED_COLOURS), once=True)
+            self.fill_map_static_size(pcl_cloud, 0.3)
+            try:
+                # Publish combined map with pcl2 as obstacle.
+                self._map_pub.publish(self.grid_msg)
+                self.get_logger().info("Publishing semantic map.", once=True)
+            except Exception as e:
+                print("SECOND ERROR: "+str(e))
         
 
 def main():

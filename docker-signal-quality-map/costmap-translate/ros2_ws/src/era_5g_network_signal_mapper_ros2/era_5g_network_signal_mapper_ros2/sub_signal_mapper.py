@@ -35,64 +35,54 @@ class SubSignalMapper(Node):
             # Function to construct a pointcloud2 object 
             # which will represent the collections of current clouds 
             def construct_pointCloud2(points):
-                
-                # ROS DATATYPE 
-                ros_dtype = PointField.FLOAT32
-                
-                # The PointCloud2 message also has a header which specifies which 
-                # coordinate frame it is represented in.
-                header = std_msgs.Header()
-
-                 # The fields specify what the bytes represents. The first 4 bytes 
-                # represents the x-coordinate, the next 4 the y-coordinate, etc.
-                fields = [
-                    PointField(name='x', offset=0, datatype=ros_dtype, count=1),
-                    PointField(name='y', offset=4, datatype=ros_dtype, count=1),
-                    PointField(name='z', offset=8, datatype=ros_dtype, count=1),
-                    PointField(name='rgb', offset=12, datatype=PointField.FLOAT32, count=1),
-                    PointField(name='intensity', offset=16, datatype=PointField.FLOAT32, count=1)
-                ]
-                pcl_msg = pcl2.create_cloud(header, fields, points)
-                pcl_msg.header.stamp = self.get_clock().now().to_msg()
-                pcl_msg.header.frame_id = self.map_frame
-                return pcl_msg
-            
+                            # ROS DATATYPE
+                            ros_dtype = PointField.FLOAT32
+                            # The PointCloud2 message also has a header which specifies which
+                            # coordinate frame it is represented in.
+                            header = std_msgs.Header()
+                            # The fields specify what the bytes represents. The first 4 bytes
+                            # represents the x-coordinate, the next 4 the y-coordinate, etc.
+                            fields = [
+                                PointField(name='x', offset=0, datatype=ros_dtype, count=1),
+                                PointField(name='y', offset=4, datatype=ros_dtype, count=1),
+                                PointField(name='z', offset=8, datatype=ros_dtype, count=1),
+                                PointField(name='rgb', offset=12, datatype=PointField.FLOAT32, count=1),
+                                PointField(name='confidence', offset=16, datatype=PointField.FLOAT32, count=1),
+                                PointField(name='size', offset=20, datatype=PointField.FLOAT32, count=1)
+                            ]
+                            pcl_msg = pcl2.create_cloud(header, fields, points)
+                            pcl_msg.header.stamp = self.get_clock().now().to_msg()
+                            pcl_msg.header.frame_id = self.map_frame
+                            return pcl_msg
+                        
             # Creating sub_callback which will receive current cloud of the robot "pcl"
             def sub_callback(pcl):
-                
                 # the amount of time to wait until fail receiving both frames
                 timeout = Duration(seconds=10)
                 # Waiting until transfrom of map_frame and semantic_map_frame is available
                 transform = self.tf_buffer.lookup_transform('map', 'semantic_map', rclpy.time.Time(), timeout)
-                
                 # Atempt to transform frame "map" to "semantic_map" and add cloud received from "pcl"
                 try:
                     transformed_cloud = tf2_c.do_transform_cloud(pcl, transform)
-
                 except Exception as ex:
                     self.get_logger().info(str(ex))
-
                 # Get the points from the pcl2.
                 self.get_logger().info("Publishing transformed_cloud", once=True)
                 gen = pcl2.read_points(transformed_cloud, skip_nans=True)
                 int_data = list(gen)
-                
                 temp_list = []
-                
                 for element in int_data:
                     mini = []
                     for x in element:
                         mini.append(x)
                     temp_list.append(mini)
-
                 # Append latest pointcloud to merged_cloud
                 for y in temp_list:
                     merged_cloud.append(y)
                 # Recreate the merged pointcloud
                 map_pcl = construct_pointCloud2(merged_cloud)
-
                 # Publishing a map created from collection of current semantic cloud of the robot
-                # Rate of pubication is rate of "semantic_pcl_sub" minus time of waiting 
+                # Rate of pubication is rate of "semantic_pcl_sub" minus time of waiting
                 # frames for transformation from "self.tf_buffer.lookup_transform...."
                 self.semantic_pcl_pub.publish(map_pcl)
 

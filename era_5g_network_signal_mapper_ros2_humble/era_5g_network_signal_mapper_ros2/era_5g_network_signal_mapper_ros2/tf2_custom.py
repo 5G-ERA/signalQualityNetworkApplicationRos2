@@ -45,10 +45,8 @@ def transform_to_kdl(t : TransformStamped):
 def do_transform_cloud(cloud, transform):
     t_kdl = transform_to_kdl(transform)
     points_out = []
-    
     for p_in in read_points(cloud):
         p_out = t_kdl * PyKDL.Vector(p_in[0], p_in[1], p_in[2])
-        points_out.append((p_out[0], p_out[1], p_out[2]) + (p_in[3],)+ (p_in[4],))
+        points_out.append((p_out[0], p_out[1], p_out[2]) + (p_in[3],)+ (p_in[4],)+ (p_in[5],))
         res = create_cloud(transform.header, cloud.fields, points_out)
-
     return res

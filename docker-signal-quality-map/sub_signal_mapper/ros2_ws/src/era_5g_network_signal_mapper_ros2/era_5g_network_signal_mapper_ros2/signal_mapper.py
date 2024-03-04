@@ -128,73 +128,69 @@ class FramePublisher(Node):
             r = 124
             g = 252
             b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            self.create_simple_pointcloud()
         elif msg.data == "RED":
             self.get_logger().info("CHANGE TO RED")
             r = 255
             g = 0
             b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            self.create_simple_pointcloud()
         elif msg.data == "BLUE":
             self.get_logger().info("CHANGE TO BLUE")
             r = 0
             g = 0
             b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            self.create_simple_pointcloud()
         elif msg.data == "YELLOW":
             self.get_logger().info("CHANGE TO YELLOW")
             r = 255
             g = 255
             b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            self.create_simple_pointcloud()
         elif msg.data == "ORANGE":
             self.get_logger().info("CHANGE TO ORANGE")
             r = 255
             g = 165
             b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            self.create_simple_pointcloud()
 
-    def create_simple_pointcloud(self):
-        global confidence
-
-        rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
-        confidence = confidence + 1.0
-        if (confidence > 99):
-            confidence = 0.0
-        #print(confidence)
-
-        cloud_points = []
-
-        # Creating point clouds of the current position of the robot 
-        for x in np.arange(0,height,lamba):
-            for y in np.arange(-lenght,lenght,lamba):
-                #cloud_points.append([x, y, 0.0, rgb])
-                #cloud_points.append([-x, y, 0.0, rgb]) 
-                
-                cloud_points.append([x, y, 0.0, rgb, confidence])
-                cloud_points.append([-x, y, 0.0, rgb, confidence])       
-
-
-        # ROS DATATYPE 
-        ros_dtype = PointField.FLOAT32
-
-        # The PointCloud2 message also has a header which specifies which 
-        # coordinate frame it is represented in.
-        header = std_msgs.Header()
-        
-        # The fields specify what the bytes represents. The first 4 bytes 
-        # represents the x-coordinate, the next 4 the y-coordinate, etc.
-        
-        fields = [
-            PointField(name='x', offset=0, datatype=ros_dtype, count=1),
-            PointField(name='y', offset=4, datatype=ros_dtype, count=1),
-            PointField(name='z', offset=8, datatype=ros_dtype, count=1),
-            # The 4th set of bytes represent colour of pointcloud
-            PointField(name='rgb', offset=12, datatype=PointField.FLOAT32, count=1),
-            PointField(name='confidence', offset=16, datatype=PointField.FLOAT32, count=1)
-        ]
-        # creating a cloud and store in pcl_msg
-        pcl_msg = pcl2.create_cloud(header, fields, cloud_points)
-        pcl_msg.header.stamp = self.get_clock().now().to_msg()
-        pcl_msg.header.frame_id = self.semantic_map_frame
-
-        # Publishing cloud created at the current possition of the robot
-        self.current_pcl_pub.publish(pcl_msg)
+    def create_simple_pointcloud(self, point_size=2):
+            global confidence
+            rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
+            confidence = confidence + 1.0
+            if (confidence > 99):
+                confidence = 0.0
+            # print(confidence)
+            cloud_points = []
+            # Add a single point at the center of the point cloud with the specified size
+            cloud_points.append([0.0, 0.0, 0.0, rgb, confidence, point_size]) #
+            # ROS DATATYPE
+            ros_dtype = PointField.FLOAT32
+            # The point cloud also has a header specifying which coordinate frame it's represented in
+            header = std_msgs.Header()
+            # The fields specify what the bytes represent. The first 4 bytes represent the x-coordinate,
+            # the next 4 the y-coordinate, etc.
+            fields = [
+                PointField(name='x', offset=0, datatype=ros_dtype, count=1),
+                PointField(name='y', offset=4, datatype=ros_dtype, count=1),
+                PointField(name='z', offset=8, datatype=ros_dtype, count=1),
+                # The 4th set of bytes represents the color of the point cloud
+                PointField(name='rgb', offset=12, datatype=PointField.FLOAT32, count=1),
+                PointField(name='confidence', offset=16, datatype=PointField.FLOAT32, count=1),
+                # Add a field for the point size
+                PointField(name='size', offset=20, datatype=PointField.FLOAT32, count=1)
+            ]
+            # Create a point cloud and store it in pcl_msg
+            pcl_msg = pcl2.create_cloud(header, fields, cloud_points)
+            pcl_msg.header.stamp = self.get_clock().now().to_msg()
+            pcl_msg.header.frame_id = self.semantic_map_frame
+            # Publish the created point cloud at the current robot position
+            self.current_pcl_pub.publish(pcl_msg)
 
 
 def main():
