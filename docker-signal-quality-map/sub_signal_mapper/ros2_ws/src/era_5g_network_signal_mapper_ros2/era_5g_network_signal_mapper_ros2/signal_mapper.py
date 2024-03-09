@@ -74,7 +74,7 @@ class FramePublisher(Node):
             self.get_logger().info('Sending Position of robot', once=True)
             #global amcl_pose_msg
             self.send_transformation_of_frames2(self.amcl_pose_msg)
-            self.create_simple_pointcloud()
+            #self.create_simple_pointcloud()
 
         except TransformException as ex:
             self.get_logger().info(str(ex))
@@ -84,7 +84,7 @@ class FramePublisher(Node):
         self.amcl_pose_msg = msg
         self.initial_pose_received = True
         self.send_transformation_of_frames2(self.amcl_pose_msg)
-        self.create_simple_pointcloud()
+        #self.create_simple_pointcloud()
         #return
 
     # Transform frame received from "lookup_transform"; in our case we transform robot_base_frame to map_frame
@@ -115,50 +115,9 @@ class FramePublisher(Node):
             # Send the transformation
             self.tf_broadcaster.sendTransform(t)
 
-    # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
-    # from "pcl_colour_subscriber" which represent signal strength
-    def signal_color_callback(self, msg):
-
-
-        self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
-
-        global r, g, b
-        if msg.data == "GREEN":
-            self.get_logger().info("CHANGE TO GREEN")
-            r = 124
-            g = 252
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-            self.create_simple_pointcloud()
-        elif msg.data == "RED":
-            self.get_logger().info("CHANGE TO RED")
-            r = 255
-            g = 0
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-            self.create_simple_pointcloud()
-        elif msg.data == "BLUE":
-            self.get_logger().info("CHANGE TO BLUE")
-            r = 0
-            g = 0
-            b = 255
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-            self.create_simple_pointcloud()
-        elif msg.data == "YELLOW":
-            self.get_logger().info("CHANGE TO YELLOW")
-            r = 255
-            g = 255
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-            self.create_simple_pointcloud()
-        elif msg.data == "ORANGE":
-            self.get_logger().info("CHANGE TO ORANGE")
-            r = 255
-            g = 165
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
             self.create_simple_pointcloud()
 
+    
     def create_simple_pointcloud(self, point_size=2):
             global confidence
             rgb = struct.unpack('I', struct.pack('BBBB', b, g, r, 0))[0]
@@ -191,6 +150,146 @@ class FramePublisher(Node):
             pcl_msg.header.frame_id = self.semantic_map_frame
             # Publish the created point cloud at the current robot position
             self.current_pcl_pub.publish(pcl_msg)
+
+    # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
+    # from "pcl_colour_subscriber" which represent signal strength
+    def signal_color_callback2(self, msg):
+
+
+        self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
+
+        global r, g, b
+        if msg.data == "GREEN":
+            self.get_logger().info("CHANGE TO GREEN")
+            r = 255
+            g = 255
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            #self.create_simple_pointcloud()
+        elif msg.data == "RED":
+            self.get_logger().info("CHANGE TO RED")
+            r = 255
+            g = 0
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            #self.create_simple_pointcloud()
+        elif msg.data == "BLUE":
+            self.get_logger().info("CHANGE TO BLUE")
+            r = 0
+            g = 0
+            b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            #self.create_simple_pointcloud()
+        elif msg.data == "YELLOW":
+            self.get_logger().info("CHANGE TO YELLOW")
+            r = 124
+            g = 252
+            b = 0
+            
+
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            #self.create_simple_pointcloud()
+        elif msg.data == "ORANGE":
+            self.get_logger().info("CHANGE TO ORANGE")
+            r = 255
+            g = 165
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            #self.create_simple_pointcloud()
+
+    # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
+    # from "pcl_colour_subscriber" which represent signal strength
+    def signal_color_callback(self, msg):
+
+
+        self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
+
+        global r, g, b
+        if msg.data == "BLACK":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 0
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "WHITE":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 255
+            g = 255
+            b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "RED":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 255
+            g = 0
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "LIME":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 255
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "BLUE":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 0
+            b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "YELLOW":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 255
+            g = 255
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "CYAN":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 255
+            b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "MAGENTA":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 255
+            g = 0
+            b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "MAROON":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 128
+            g = 0
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "OLIVE":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 128
+            g = 128
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "GREEN":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 128
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "PURPLE":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 128
+            g = 0
+            b = 128
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "TEAL":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 128
+            b = 128
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "NAVY":
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 0
+            b = 128
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+
 
 
 def main():

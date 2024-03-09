@@ -12,9 +12,10 @@ class ColorDetectorNode(Node):
     def __init__(self):
         super().__init__('color_detector_node')
 
-        self.create_subscription(PointCloud2, '/semantic_pcl', self.pointcloud_callback, 10)
+        self.create_subscription(PointCloud2, '/loaded_pointcloud', self.pointcloud_callback, 10)
         self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose', self.pose_callback, 10)
         self.publisher_ = self.create_publisher(String, '/current_color', 10)
+        self.semanic_pcl = None
 
         self.robot_position = None
 
@@ -49,7 +50,7 @@ class ColorDetectorNode(Node):
         robot_y = self.robot_position.y
 
         # Extract point cloud data
-        points = pcl2.read_points(pointcloud_msg, field_names=("x", "y", "z", "rgb"), skip_nans=True)
+        points = pcl2.read_points(pointcloud_msg, field_names=("x", "y", "z", "rgb", "confidence", "size"), skip_nans=True)
 
         for point in points:
             # Check if point is within the bounding box
