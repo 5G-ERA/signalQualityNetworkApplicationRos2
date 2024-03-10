@@ -153,7 +153,7 @@ class FramePublisher(Node):
 
     # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
     # from "pcl_colour_subscriber" which represent signal strength
-    def signal_color_callback2(self, msg):
+    def signal_color_callback(self, msg):
 
 
         self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
@@ -199,7 +199,7 @@ class FramePublisher(Node):
 
     # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
     # from "pcl_colour_subscriber" which represent signal strength
-    def signal_color_callback(self, msg):
+    def signal_color_callback1(self, msg):
 
 
         self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
