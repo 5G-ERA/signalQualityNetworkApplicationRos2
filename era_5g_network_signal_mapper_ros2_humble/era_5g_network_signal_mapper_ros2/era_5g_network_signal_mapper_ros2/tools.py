@@ -296,7 +296,7 @@ class PointCloudSaverNode(Node):
                         
                         
     def create_partial_map_callback(self, request, response):
-        #ros2 service call /update_pcl pcl_interfaces/srv/PartialMapRequest "{pcl1: pcl1.txt, min_x: -1.3, max_x: 1, min_y: -2, max_y: -1, pcl_out: pcl4.txt}"
+        #ros2 service call /update_pcl pcl_interfaces/srv/PartialMapRequest "{pcl1: pcl1.txt, min_x: -1.3, max_x: 1, min_y: -2, max_y: -1, pcl_out: pcl_out.txt}"
         # Extract filenames and bounding box limits from the request
         pcl_filename_1 = request.pcl1
         pcl_out = request.pcl_out

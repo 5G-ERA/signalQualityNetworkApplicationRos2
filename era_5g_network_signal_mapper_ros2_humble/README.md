@@ -159,6 +159,55 @@ ros2 service call /load_and_publish_pointcloud std_srvs/Trigger "{}"
 ```
 And select topic: "/loaded_pointcloud"
 
+### ROS Service for for updating confidence of semanitc PCL from static file
+
+
+```
+python3 tools.py
+```
+
+```
+ros2 service call /append_pcl pcl_interfaces/srv/AppendPcl "{pcl1: pcl1.txt, pcl_out: pcl3.txt}"
+```
+### ROS Service for requestic pcl from an area (from static file)
+
+
+```
+python3 tools.py
+```
+
+The area of interest must be specified:
+
+It needs 4 coordinates corners
+
+min_x = left side border line
+
+max_x = right side border line
+
+min_y = bottom border line
+
+max_y = top border line
+
+
+pcl1 represent filename of semanitc  source map
+
+pcl_out represent filename of target semantic map, if file does not exists, new file will be created, if file exists, the content will be overwritten.
+
+
+```
+ros2 service call /update_pcl pcl_interfaces/srv/PartialMapRequest "{pcl1: pcl1.txt, min_x: -1.3, max_x: 1, min_y: -2, max_y: -1, pcl_out: pcl_out.txt}"
+```
+### ROS Service for combining two semantic PCL files in another specified file
+
+
+```
+python3 tools.py
+```
+
+```
+ros2 service call /append_pcl pcl_interfaces/srv/AppendPcl "{pcl1: pcl1.txt, pcl2: pcl2.txt, pcl_out: pcl3.txt}"
+```
+
 ### Multirobot support
 client:
 ```
