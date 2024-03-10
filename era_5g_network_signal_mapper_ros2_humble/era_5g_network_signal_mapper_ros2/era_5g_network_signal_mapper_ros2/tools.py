@@ -271,9 +271,7 @@ class PointCloudSaverNode(Node):
                         if (16776960.0 == rgb):
                             top_value =  top_value + ((1 - meadian) * (1 - meadian))
 
-                    sqrt1=math.sqrt(top_value)
-
-                    omega = sqrt1/total_samples
+                    omega = math.sqrt(top_value/(total_samples-1))
 
                     #'''
                     for point in points:

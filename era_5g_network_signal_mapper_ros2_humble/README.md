@@ -159,7 +159,10 @@ ros2 service call /load_and_publish_pointcloud std_srvs/Trigger "{}"
 ```
 And select topic: "/loaded_pointcloud"
 
-### ROS Service for for updating confidence of semanitc PCL from static file
+### ROS Service for for updating confidence of semanitc PCL from static file (and saved in another file)
+
+Formula used for confidence calculation: 
+<img src="https://kierandixon.com/wp-content/uploads/sample-standard-deviation-equation.png" alt="Sample Standard Deviation Equation" width="15%" height="15%">
 
 
 ```
@@ -167,7 +170,7 @@ python3 tools.py
 ```
 
 ```
-ros2 service call /append_pcl pcl_interfaces/srv/AppendPcl "{pcl1: pcl1.txt, pcl_out: pcl3.txt}"
+ros2 service call /update_pcl pcl_interfaces/srv/AppendPcl "{pcl1: pcl1.txt, pcl2: pcl2.txt, pcl_out: pcl3.txt}"
 ```
 ### ROS Service for requestic pcl from an area (from static file)
 
