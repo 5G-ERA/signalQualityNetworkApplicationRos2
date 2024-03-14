@@ -198,7 +198,7 @@ pcl_out represent filename of target semantic map, if file does not exists, new 
 
 
 ```
-ros2 service call /update_pcl pcl_interfaces/srv/PartialMapRequest "{pcl1: pcl1.txt, min_x: -1.3, max_x: 1, min_y: -2, max_y: -1, pcl_out: pcl_out.txt}"
+ros2 service call /request_partial_map pcl_interfaces/srv/PartialMapRequest "{pcl1: pcl1.txt, min_x: -1.3, max_x: 1, min_y: -2, max_y: -1, pcl_out: pcl_out.txt}"
 ```
 ### ROS Service for combining two semantic PCL files in another specified file
 
