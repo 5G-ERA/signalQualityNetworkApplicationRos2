@@ -153,7 +153,7 @@ class FramePublisher(Node):
 
     # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
     # from "pcl_colour_subscriber" which represent signal strength
-    def signal_color_callback(self, msg):
+    def signal_color_callback2(self, msg):
 
 
         self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
@@ -192,104 +192,123 @@ class FramePublisher(Node):
         elif msg.data == "ORANGE":
             self.get_logger().info("CHANGE TO ORANGE")
             r = 255
-            g = 165
+            g = 192
             b = 0
             self.send_transformation_of_frames2(self.amcl_pose_msg)
             #self.create_simple_pointcloud()
 
     # Set pcl colour callback; setting values of "r" "g" "b" accordingly to message received 
     # from "pcl_colour_subscriber" which represent signal strength
-    def signal_color_callback1(self, msg):
-
+    def signal_color_callback(self, msg):
 
         self.get_logger().info(str(msg.data) + " COLOR REQUESTED TO CHANGE!!!")
 
         global r, g, b
-        if msg.data == "BLACK":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 0
-            g = 0
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "WHITE":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 255
-            g = 255
-            b = 255
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "RED":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 255
-            g = 0
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "LIME":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 0
-            g = 255
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "BLUE":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 0
-            g = 0
-            b = 255
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "YELLOW":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 255
-            g = 255
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "CYAN":
+            
+        if msg.data == "GREEN": #colour code green 1: 65535.0
             self.get_logger().info(f"CHANGE TO {msg.data}")
             r = 0
             g = 255
             b = 255
             self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "MAGENTA":
+        if msg.data == "YELLOW": #colour code yellow 2: 8190976.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 124
+            g = 252
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "RED":  #colour code red 3: 7902720.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 120 #blue 
+            g = 150
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+            
+        if msg.data == "BLUE2":#blue
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 150 #blue 
+            g = 0
+            b = 200
+            self.send_transformation_of_frames2(self.amcl_pose_msg)            
+        if msg.data == "BLUE": #colour code blue 4: 8532735.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 130 #blue 
+            g = 50
+            b = 255 
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "PURPLE": #colour code purple 5: 16711935.0
             self.get_logger().info(f"CHANGE TO {msg.data}")
             r = 255
             g = 0
             b = 255
             self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "MAROON":
+        if msg.data == "PINK": #colour code pink 6: 7864520.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 120 #pink 
+            g = 0
+            b = 200
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "TEAL": #colour code teal 7: 8421504.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 128
+            g = 128
+            b = 128
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "ORANGE": #colour code orange 8: 7910400.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 120 #blue 
+            g = 180
+            b = 0    
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "CYAN": #colour code cyan 9: 16777215.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 255
+            g = 255
+            b = 255
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "MAROON": #colour code maroon 10: 3294790.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 50 #maroon 
+            g = 70
+            b = 70
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "LIME": #colour code lime 11: 5926430.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 90 #lime 
+            g = 110
+            b = 30 
+            self.send_transformation_of_frames2(self.amcl_pose_msg)        
+        if msg.data == "BROWN": #colour code brown 12: 4633620.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 70 #brown 
+            g = 180
+            b = 20
+            self.send_transformation_of_frames2(self.amcl_pose_msg)        
+        if msg.data == "BLACK": #colour code black 13: 8388608.0
             self.get_logger().info(f"CHANGE TO {msg.data}")
             r = 128
             g = 0
             b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "OLIVE":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 128
-            g = 128
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "GREEN":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 0
-            g = 128
-            b = 0
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "PURPLE":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 128
-            g = 0
-            b = 128
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "TEAL":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 0
-            g = 128
-            b = 128
-            self.send_transformation_of_frames2(self.amcl_pose_msg)
-        if msg.data == "NAVY":
-            self.get_logger().info(f"CHANGE TO {msg.data}")
-            r = 0
-            g = 0
-            b = 128
             self.send_transformation_of_frames2(self.amcl_pose_msg)
 
+        if msg.data == "RED_DARK": #colour code red_dark 14: 16711680.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 255
+            g = 0
+            b = 0
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "BLUE_DARK": #colour code blue_dark 15: 8388736.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 128
+            g = 0
+            b = 128
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
+        if msg.data == "GREEN_DARK": #colour code green_dark 16: 32896.0
+            self.get_logger().info(f"CHANGE TO {msg.data}")
+            r = 0
+            g = 128
+            b = 128
+            self.send_transformation_of_frames2(self.amcl_pose_msg)
 
 
 def main():
