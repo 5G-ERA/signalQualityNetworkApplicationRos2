@@ -221,3 +221,7 @@ server:
 ```
 docker run --network host --rm -e ROS_DOMAIN_ID=30 -e TOPICS_FROM_CLIENT='[{"name":"/tb1/amcl_pose","type":"geometry_msgs/msg/PoseWithCovarianceStamped","qos":{"depth":1,"history":1,"reliability":1,"durability":1}},{"name": "/tb2/amcl_pose","type":"geometry_msgs/msg/PoseWithCovarianceStamped","qos":{"depth":1,"history":1,"reliability":1,"durability":1}}]' -e TOPICS_TO_CLIENT='[{"name": "/semantic_pcl","type": "sensor_msgs/msg/PointCloud2","compression": "lz4"}]' but5gera/ros2_relay_server:1.0.0
 ```
+
+### Switchover support
+
+Using the semantic map, a robot can decide when to call for a switchover of a network application it is using (like object detection) to a better located edge using knowledge of quality map. Check switch.py (service server)  and auto-switch (client server) for more information).
