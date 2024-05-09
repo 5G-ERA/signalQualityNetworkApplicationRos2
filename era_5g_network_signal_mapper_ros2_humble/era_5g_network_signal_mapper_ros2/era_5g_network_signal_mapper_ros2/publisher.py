@@ -47,28 +47,17 @@ class influx_coloring(Node):
                         # Orange Poor Signal
                         # Red No Signal
                         signal_strength = String()
-                        '''
-                        if  rsrp > -85.0:
-                            signal_strength.data = "RED"      
-    
-
-                        elif  (rsrp <= -75.0) and (rsrp > -85.0):
+                        self.get_logger().info("signal_value: "+ str(rsrp))
+                        crsrp=abs(rsrp)
+                        red_value=100.0
+                        green_value=95.00
+                        if  crsrp > red_value:
+                            signal_strength.data = "RED"
+                        elif  (crsrp <= red_value) and (crsrp >= green_value):
                             signal_strength.data = "YELLOW"
-
-                        elif rsrp > -75.0:
+                        elif crsrp < green_value:
                             signal_strength.data = "GREEN"
-                        '''
-
-                        if rsrp > -75.0:
-                            signal_strength.data = "GREEN"
-
-                       
-                        elif  rsrp < -85.0:
-                            signal_strength.data = "RED"      
-    
-
-                        elif  (rsrp <= -75.0) and (rsrp > -85.0):
-                            signal_strength.data = "YELLOW"
+                        self.get_logger().info("signal_data: "+ signal_strength.data
 
                         
                         #rospy.loginfo(signal_strength)
