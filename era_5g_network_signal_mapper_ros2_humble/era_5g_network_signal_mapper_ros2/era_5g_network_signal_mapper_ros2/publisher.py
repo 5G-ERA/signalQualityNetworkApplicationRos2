@@ -1,3 +1,7 @@
+'''
+ROS Node to get router RSPR values and translte into ROS topic of type String for color.
+'''
+
 #!/usr/bin/env python3
 
 import rclpy
