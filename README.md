@@ -162,10 +162,14 @@ ros2 run era_5g_network_signal_mapper_ros2 client_service_auto_switchover_action
 
 ## 9) Addendum: 
 
-ROS2 Bag for recording with compresion.
+* ROS2 Bag for recording with compresion.
 ```
 ros2 bag record --all --compression-mode file --compression-format zstd
 ```
+
+* ROS 1 Package also available at github [repository](https://github.com/5G-ERA/signal_quality_network_application).
+
+* CROP Middleware and documentation available at github [repository](https://github.com/5G-ERA/docs). 
 
 ## 10) Acknoledgements:
 
