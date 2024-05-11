@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+'''
+Ros2 Node that will publish under the topic /pcl_colour from user input keyboard as number in result will be published string name of the colour;
+'''
+
 import rclpy
 from std_msgs.msg import String
 from rclpy.node import Node
@@ -8,31 +12,12 @@ class cloud_coloring(Node):
 
     def __init__(self):
         super().__init__('pub_color')
-
-        '''
-                #colour code green 1: 65535.0
-                #colour code yellow 2: 8190976.0
-                #colour code red 3: 7902720.0
-                #colour code blue 4: 8532735.0
-                #colour code purple 5: 16711935.0
-                #colour code pink 6: 7864520.0
-                #colour code teal 7: 8421504.0
-                #colour code orange 8: 7910400.0
-                #colour code cyan 9: 16777215.0
-                #colour code maroon 10: 3294790.0
-                #colour code lime 11: 5926430.0
-                #colour code brown 12: 4633620.0
-                #colour code black 13: 8388608.0
-                #colour code red_dark 14: 16711680.0
-                #colour code blue_dark 15: 8388736.0
-                #colour code green_dark 16: 32896.0
-        #'''
         
         self.pub = self.create_publisher(String, '/pcl_colour', 10)
         while True:
                 
                 self.get_logger().info("\n- Publish pcl colour -", once=True)       
-                self.get_logger().info("   1. Publish GREEN", once=True)            #colour code green 1: 65535.0
+                self.get_logger().info("   1. Publish GREEN", once=True)            #colour code green 1: 65535.0           #The values as numbers represent rgb value as integer recognised in the node signal mapper to produce proper color of pcl .
                 self.get_logger().info("   2. Publish YELLOW", once=True)           #colour code yellow 2: 8190976.0
                 self.get_logger().info("   3. Publish RED", once=True)              #colour code red 3: 7902720.0
                 self.get_logger().info("   4. Publish BLUE", once=True)             #colour code blue 4: 8532735.0
@@ -51,16 +36,6 @@ class cloud_coloring(Node):
                 self.get_logger().info("   99. Exit", once=True)
                 colour = input('Input: ')
 
-                '''
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                #'''
 
                 if str(colour) == "1": #colour code green 1: 65535.0
                     msg = String()
@@ -187,65 +162,3 @@ def main():
     finally:
         node.destroy_node()
         rclpy.shutdown()
-
-
-'''
-                #colour code green 1: 65535.0
-                #colour code yellow 2: 8190976.0
-                #colour code red 3: 7902720.0
-                #colour code blue 4: 8532735.0
-                #colour code purple 5: 16711935.0
-                #colour code pink 6: 7864520.0
-                #colour code teal 7: 8421504.0
-                #colour code orange 8: 7910400.0
-                #colour code cyan 9: 16777215.0
-                #colour code maroon 10: 3294790.0
-                #colour code lime 11: 5926430.0
-                #colour code brown 12: 4633620.0
-                #colour code black 13: 8388608.0
-                #colour code red_dark 14: 16711680.0
-                #colour code blue_dark 15: 8388736.0
-                #colour code green_dark 16: 32896.0
-
-        
-                        
-                self.get_logger().info("\n- Publish pcl colour -", once=True)
-                self.get_logger().info("   1. Publish GREEN", once=True)
-                self.get_logger().info("   2. Publish WHITE", once=True)
-                self.get_logger().info("   3. Publish RED", once=True)
-                self.get_logger().info("   4. Publish LIME", once=True)
-                self.get_logger().info("   5. Publish BLUE", once=True)
-                self.get_logger().info("   6. Publish YELLOW", once=True)
-                self.get_logger().info("   7. Publish CYAN", once=True)
-                self.get_logger().info("   8. Publish MAGENTA", once=True)
-                self.get_logger().info("   9. Publish MAROON", once=True)
-                self.get_logger().info("   10. Publish OLIVE", once=True)
-                self.get_logger().info("   11. Publish GREEN", once=True)
-                self.get_logger().info("   12. Publish PURPLE", once=True)
-                self.get_logger().info("   13. Publish TEAL", once=True)
-                self.get_logger().info("   14. Publish NAVY", once=True)
-                self.get_logger().info("   15. Publish PINK", once=True)
-                self.get_logger().info("   16. Publish ORANGE", once=True)
-                self.get_logger().info("   99. Exit", once=True)
-                colour = input('Input: ')
-#'''
-
-
-'''
-        if msg.data == "GREEN":#green 1
-        if msg.data == "YELLOW":#yellow 2
-        if msg.data == "RED":#red 3     
-        if msg.data == "BLUE":#blue 4
-        if msg.data == "PURPLE":#purple 5
-        if msg.data == "PINK":#pink 6
-        if msg.data == "TEAL":# teal 7
-        if msg.data == "ORANGE":#orange 8
-        if msg.data == "CYAN":#cyan 9
-        if msg.data == "MAROON":#maroon 10
-        if msg.data == "LIME":# lime 11    
-        if msg.data == "BROWN":#brown 12
-        if msg.data == "BLAK":#black 13
-        if msg.data == "RED_DARK":#red_dark 14
-        if msg.data == "BLUE_DARK":#blue_dark 15
-        if msg.data == "GREEN_DARK":#green_dark 16
-#'''

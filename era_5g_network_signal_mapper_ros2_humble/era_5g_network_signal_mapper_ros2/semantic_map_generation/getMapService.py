@@ -5,6 +5,9 @@ from rclpy.node import Node
 from nav_msgs.srv import GetMap
 from nav_msgs.msg import OccupancyGrid
 
+'''
+Reference ROS node to get map server
+'''
 
 class Mapper(Node):
     def __init__(self):

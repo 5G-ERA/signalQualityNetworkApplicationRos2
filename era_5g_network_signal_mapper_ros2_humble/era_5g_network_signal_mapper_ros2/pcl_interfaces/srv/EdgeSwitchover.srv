@@ -1,0 +1,9 @@
+string action_plan_id
+string url_edge
+string action_id
+string destination
+string destination_type
+string bearer
+---
+bool success
+string message

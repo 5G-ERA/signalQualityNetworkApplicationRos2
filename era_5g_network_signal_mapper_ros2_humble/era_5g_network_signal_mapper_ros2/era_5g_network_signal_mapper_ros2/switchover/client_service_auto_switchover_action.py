@@ -38,9 +38,10 @@ class PointCloudSaverNode(Node):
         self.req = EdgeSwitchover.Request()
 
 
-        task_id = "6897fb8e-a2bb-4b79-ac6e-97b0c305798b"
+        task_id = "4ff6c1d3-ba52-4993-8d78-c46352a6ef0c"# old task id: 6897fb8e-a2bb-4b79-ac6e-97b0c305798b
         robot_id = "8f384ffb-5599-419b-805a-206633f5f2f5"
         self.token = self.get_middleware_token()
+        #get all plans and filter by task_id and robot_id
         action_plans_json = self.get_action_plan_id(self.token)
 
         self.action_plan_id = self.get_action_plan_id_by_task_and_robot(action_plans_json, task_id, robot_id)
@@ -49,6 +50,7 @@ class PointCloudSaverNode(Node):
         print(self.action_plan_id)
 
         self.action_id = self.get_action_id(self.token, task_id)
+        self.url = "http://edge2.net:31000/task/plan/switchover"
 
 
 
@@ -69,33 +71,43 @@ class PointCloudSaverNode(Node):
                     print("Here1!")
                     print(self.action_id)
 
-                    print("Here1!")
-                    self.send_request(self.action_plan_id, self.action_id, "MiddlewareLutonWorkstationTwo","Edge",self.token)
-
+                    url = "http://edge1.net:31000/task/plan/switchover"
+                    self.send_request(self.action_plan_id, self.action_id, "MiddlewareLutonWorkstationTwo","Edge",self.token, url_edge=url)
                     print("switch to: MiddlewareLutonWorkstationTwo")
+                    print("url in current_collor_callback:")
+                    print(self.url)
+                    print("url in current_collor_callback:")
+                    print("Here1!")
                 if msg.data == "GREEN":
                     #Edge 2
                     print("Here2!")
                     print(self.action_id)
 
-                    print("Here2!")
-                    self.send_request(self.action_plan_id,self.action_id, "MiddlewareLutonWorkstation","Edge",self.token)
+                    url = "http://edge2.net:31000/task/plan/switchover"
+                    self.send_request(self.action_plan_id,self.action_id, "MiddlewareLutonWorkstation","Edge",self.token, url_edge=url)
                     print("switch to: MiddlewareLutonWorkstation")
+                    print("url in current_collor_callback:")
+                    print(self.url)
+                    print("url in current_collor_callback:")
+
+
+                    print("Here2!")
 
             
 
-    def send_request(self,action_plan_id, action_id,destination, destination_type, bearer):
+    def send_request(self,action_plan_id, action_id,destination, destination_type, bearer, url_edge):
         self.req.action_plan_id = action_plan_id
         self.req.action_id = action_id
         self.req.destination = destination
         self.req.destination_type = destination_type
         self.req.bearer = bearer
+        self.req.url_edge = url_edge
         self.future = self.client.call_async(self.req)
 
     def edge_switchover_callback(self, msg, response):
 
         try:
-            url = "http://edge1.net:31000/task/plan/switchover"
+            
             actionPlanId = msg.action_plan_id
             self.actionId = msg.action_id
             actionId = self.actionId
@@ -116,8 +128,12 @@ class PointCloudSaverNode(Node):
             'Accept': 'text/plain',
             'Authorization': Bearer
             }
+            print("edge_switchover_call start")
 
-            httpResponse = requests.request("POST", url, headers=headers, data=payload)
+            print(self.url)
+
+            httpResponse = requests.request("POST", self.url, headers=headers, data=payload)
+            print("edge_switchover_call finish")
 
 
             if httpResponse.status_code == 200:

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+'''
+Ros2 Node that will publish under the topic /pcl_colour from user input keyboard as number in result will be published string name of the colour only Red, Green and Yellow;
+'''
+
+
 import rclpy
 from std_msgs.msg import String
 from rclpy.node import Node
@@ -15,9 +20,7 @@ class cloud_coloring(Node):
                 self.get_logger().info("\n- Publish pcl colour -", once=True)
                 self.get_logger().info("   1. Publish RED", once=True)
                 self.get_logger().info("   2. Publish GREEN", once=True)
-                self.get_logger().info("   3. Publish BLUE -", once=True)
                 self.get_logger().info("   4. Publish YELLOW -", once=True)
-                self.get_logger().info("   5. Publish ORANGE -", once=True)
                 self.get_logger().info("   99. Exit", once=True)
                 colour = input('Input: ')
 
@@ -36,25 +39,12 @@ class cloud_coloring(Node):
                     self.get_logger().info("Publish GREEN", once=True)                    
 
                 elif str(colour) == "3":
-                    print("BLUE")
-                    msg = String()
-                    msg.data = "BLUE"
-                    self.pub.publish(msg)
-                    self.get_logger().info("Publish BLUE", once=True)
-
-                elif str(colour) == "4":
                     print("YELLOW")
                     msg = String()
                     msg.data = "YELLOW"
                     self.pub.publish(msg)
                     self.get_logger().info("Publish YELLOW", once=True)
 
-                elif str(colour) == "5":
-                    print("ORANGE")
-                    msg = String()
-                    msg.data = "ORANGE"
-                    self.pub.publish(msg)
-                    self.get_logger().info("Publish ORANGE", once=True)
                     
                 elif str(colour) == "99":
                     exit(0)

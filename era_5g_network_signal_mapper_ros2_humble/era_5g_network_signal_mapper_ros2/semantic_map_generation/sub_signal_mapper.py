@@ -7,7 +7,7 @@ from sensor_msgs.msg import PointCloud2, PointField
 import std_msgs.msg as std_msgs
 import sensor_msgs_py.point_cloud2 as pcl2
 from rclpy.duration import Duration
-import era_5g_network_signal_mapper_ros2.tf2_custom as tf2_c
+import era_5g_network_signal_mapper_ros2.semantic_map_generation.tf2_custom as tf2_c
 import era_5g_network_signal_mapper_ros2.declare_param as paramm
 
 

@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 '''
 ROS Node to get router RSPR values and translte into ROS topic of type String for color.
+TODO: parameters to be included for flexible change as input from ENV, params.yaml or default values.
 '''
 
-#!/usr/bin/env python3
 
 import rclpy
 from std_msgs.msg import String
@@ -61,7 +63,7 @@ class influx_coloring(Node):
                             signal_strength.data = "YELLOW"
                         elif crsrp < green_value:
                             signal_strength.data = "GREEN"
-                        self.get_logger().info("signal_data: "+ signal_strength.data
+                        self.get_logger().info("signal_data: "+ signal_strength.data)
 
                         
                         #rospy.loginfo(signal_strength)

@@ -30,10 +30,13 @@ setup(
             "colour_pub = era_5g_network_signal_mapper_ros2.colour_pub:main",
             "publisher = era_5g_network_signal_mapper_ros2.publisher:main",
             "get_data = era_5g_network_signal_mapper_ros2.get_data:main",
-            "current_color = era_5g_network_signal_mapper_ros2.current_color:main",
-            "colours_red_green_yellow = era_5g_network_signal_mapper_ros2.colours_red_green_yellow:main",
-            "colours_multy = era_5g_network_signal_mapper_ros2.colours_multy:main",
-            "current_color_confidence = era_5g_network_signal_mapper_ros2.current_color_confidence:main"
+            "current_color = era_5g_network_signal_mapper_ros2.color.current_color:main",
+            "colours_red_green_yellow = era_5g_network_signal_mapper_ros2.color.colours_red_green_yellow:main",
+            "colours_multy = era_5g_network_signal_mapper_ros2.color.colours_multy:main",
+            "current_color_confidence = era_5g_network_signal_mapper_ros2.color.current_color_confidence:main",
+            "semantic_map_server = era_5g_network_signal_mapper_ros2.service_server_semantic_map:main",
+            "switchover_server = era_5g_network_signal_mapper_ros2.switchover.switchover_service_server:main",
+            "switchover_automatic_call = era_5g_network_signal_mapper_ros2.switchover.client_service_auto_switchover_action:main"
         ],
     },
 )

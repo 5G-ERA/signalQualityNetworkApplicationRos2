@@ -10,6 +10,10 @@ import random
 from datetime import datetime
 import threading
 
+'''
+Ros2 Node that will send random goals using action client/ action server navigation stack in given area: map_width, map_height; and time limit: exploration_duration.
+'''
+
 class MapExplorationClient(Node):
     def __init__(self, map_width, map_height,exploration_duration):
         super().__init__('map_exploration_client')

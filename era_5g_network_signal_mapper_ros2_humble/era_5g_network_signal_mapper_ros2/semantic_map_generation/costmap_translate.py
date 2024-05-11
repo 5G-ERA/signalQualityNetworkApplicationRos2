@@ -12,6 +12,10 @@ from rclpy.clock import Clock
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
 import era_5g_network_signal_mapper_ros2.declare_param as paramm
 
+'''
+Ros2 Node that publish ocupancy grid map from SLAM map and semantic map with predefined color as obstacles to this topic /map_Semantic'.
+'''
+
 # List of colours from the PointCloud2 that should not be treated as obstacles by the ROS Navigation Stack.
 ACCEPTED_COLOURS = []
 

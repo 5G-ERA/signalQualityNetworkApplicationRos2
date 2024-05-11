@@ -3,11 +3,15 @@ from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from std_msgs.msg import String
-#import sensor_msgs.point_cloud2 as pc2
 import sensor_msgs_py.point_cloud2 as pcl2
 from sensor_msgs.msg import PointCloud2, PointField
 import numpy as np
 import math
+
+'''
+Ros2 Node that will updating confidence value in pcl data structure from standart deviation formula.
+TODO: Finish implementation as it is not reflecting the desired outcome.
+'''
 
 class ColorDetectorNode(Node):
     def __init__(self):

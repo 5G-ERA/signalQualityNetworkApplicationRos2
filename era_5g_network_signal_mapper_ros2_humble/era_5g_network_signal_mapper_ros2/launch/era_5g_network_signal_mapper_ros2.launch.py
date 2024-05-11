@@ -38,9 +38,27 @@ def generate_launch_description():
         name="pcl2_to_costmap",
         parameters=[config]
     )
+
+    # Spin up semantic map server.
+    semantic_map_service_server_node = Node(
+        package="era_5g_network_signal_mapper_ros2",
+        executable="service_server_semantic_map",
+        name="semantic_map_server",
+        parameters=[config]
+    )
+
+    # Spin up semantic map server.
+    switchover_server = Node(
+        package="era_5g_network_signal_mapper_ros2",
+        executable="switchover_service_server",
+        name="swithover",
+        parameters=[config]
+    )
     
     ld.add_action(signal_mapper_node)
     ld.add_action(sub_signal_mapper_node)
-    #ld.add_action(costmap_translate_node)
+    ld.add_action(costmap_translate_node)
+    ld.add_action(semantic_map_service_server_node)
+    ld.add_action(switchover_server)
 
     return ld

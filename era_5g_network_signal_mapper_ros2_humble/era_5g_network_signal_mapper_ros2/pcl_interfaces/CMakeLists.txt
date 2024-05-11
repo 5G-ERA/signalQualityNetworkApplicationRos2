@@ -25,6 +25,7 @@ endif()
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/AppendPcl.srv"
+  "srv/EdgeSwitchover.srv"
   "srv/PartialMapRequest.srv"
  )
 ament_package()
