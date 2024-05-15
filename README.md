@@ -32,7 +32,7 @@ Following is a list of features that this package provides:
 This code was tested in ROS 2 **Humble**. Copy the content of this repository by using either git clone or manual download and paste it to your /src folder in your ros2 workspace. The only dependency is tf2-kdl which you can install follwing:
 
 ```bash
-sudo apt-get install ros-<ros_version>-tf2-kdl
+sudo apt install python3-pykdl
 ```
 
 Then build the ws.
