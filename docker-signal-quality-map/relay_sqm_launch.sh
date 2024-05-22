@@ -5,7 +5,7 @@ source /opt/ros/humble/setup.bash
 # Export unique ROS_DOMAIN_ID for testing on same machine
 export ROS_DOMAIN_ID=22
 # Export NetApp address of interface
-export NETAPP_ADDRESS=http://192.168.50.124:5896
+# export NETAPP_ADDRESS=http://192.168.50.124:5896
 # export NETAPP_ADDRESS=http://192.168.0.43:5896
 # Set TOPIC_LIST environment variable (input, images)
 
